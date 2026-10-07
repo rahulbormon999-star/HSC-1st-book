@@ -1,1607 +1,872 @@
 <!DOCTYPE html>
 <html lang="bn" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HSC 1st Year - Academic & Homework Portal</title>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        :root {
-            --bg-primary: #f8fafc;
-            --bg-card: #ffffff;
-            --bg-header: rgba(255, 255, 255, 0.9);
-            --text-primary: #0f172a;
-            --text-secondary: #64748b;
-            --border-color: #e2e8f0;
-            --accent-color: #2563eb;
-            --accent-hover: #1d4ed8;
-            --accent-light: #eff6ff;
-            --success-color: #10b981;
-            --danger-color: #ef4444;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-            --radius-lg: 16px;
-            --radius-md: 10px;
-        }
-
-        [data-theme="dark"] {
-            --bg-primary: #0f172a;
-            --bg-card: #1e293b;
-            --bg-header: rgba(30, 41, 59, 0.9);
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --border-color: #334155;
-            --accent-color: #3b82f6;
-            --accent-hover: #60a5fa;
-            --accent-light: #1e3a8a;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-        }
-
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            padding-bottom: 90px;
-        }
-
-        .app-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 16px;
-        }
-
-        header {
-            position: sticky;
-            top: 0;
-            z-index: 30;
-            background-color: var(--bg-header);
-            backdrop-filter: blur(8px);
-            border-bottom: 1px solid var(--border-color);
-            padding: 14px 0;
-        }
-
-        .header-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .brand-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo-icon {
-            background-color: var(--accent-color);
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        .brand-text h1 {
-            font-size: 1.15rem;
-            font-weight: 700;
-        }
-
-        .brand-text p {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        .session-badge {
-            background-color: var(--accent-light);
-            color: var(--accent-color);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            border: 1px solid var(--accent-color);
-        }
-
-        /* Search Trigger */
-        .search-trigger-bar {
-            margin-top: 14px;
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            padding: 10px 16px;
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .search-trigger-bar:hover {
-            border-color: var(--accent-color);
-            color: var(--text-primary);
-        }
-
-        /* Group Filter Tabs */
-        .filter-tabs {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding: 16px 0 8px 0;
-            scrollbar-width: none;
-        }
-
-        .filter-tabs::-webkit-scrollbar {
-            display: none;
-        }
-
-        .tab-btn {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        .tab-btn.active {
-            background-color: var(--accent-color);
-            color: white;
-            border-color: var(--accent-color);
-        }
-
-        .book-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 8px;
-        }
-
-        .book-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            box-shadow: var(--shadow-sm);
-            cursor: pointer;
-        }
-
-        .book-card:hover {
-            border-color: var(--accent-color);
-            box-shadow: var(--shadow-md);
-        }
-
-        .book-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-        }
-
-        .book-info-group {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .book-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            background-color: var(--accent-light);
-            color: var(--accent-color);
-            flex-shrink: 0;
-        }
-
-        .book-title-area h3 {
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .expand-icon {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            transition: transform 0.3s ease;
-        }
-
-        .book-card.open .expand-icon {
-            transform: rotate(90deg);
-            color: var(--accent-color);
-        }
-
-        .parts-container {
-            display: none;
-            border-top: 1px dashed var(--border-color);
-            padding-top: 12px;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        .book-card.open .parts-container {
-            display: flex;
-        }
-
-        .part-btn {
-            background-color: var(--accent-light);
-            color: var(--accent-color);
-            border: 1px solid var(--accent-color);
-            padding: 8px 16px;
-            border-radius: var(--radius-md);
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .part-btn:hover, .part-btn.selected {
-            background-color: var(--accent-color);
-            color: white;
-        }
-
-        /* Chapter Detail View */
-        .chapter-view-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin: 16px 0;
-        }
-
-        .back-btn {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        .back-btn:hover {
-            background-color: var(--accent-color);
-            color: white;
-        }
-
-        .chapter-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .chapter-item {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 14px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .chapter-num {
-            background-color: var(--accent-light);
-            color: var(--accent-color);
-            font-weight: 700;
-            font-size: 0.8rem;
-            padding: 4px 8px;
-            border-radius: 6px;
-            margin-right: 12px;
-            white-space: nowrap;
-        }
-
-        .hw-card-input {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            padding: 18px;
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .hw-input-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .form-input {
-            background-color: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            padding: 10px 14px;
-            border-radius: var(--radius-md);
-            font-size: 0.9rem;
-            outline: none;
-            flex: 1;
-            min-width: 140px;
-        }
-
-        .form-input:focus {
-            border-color: var(--accent-color);
-        }
-
-        .btn-primary {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 10px 18px;
-            border-radius: var(--radius-md);
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            justify-content: center;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--accent-hover);
-        }
-
-        .hw-item {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 14px 16px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
-
-        .hw-item.completed .hw-text {
-            text-decoration: line-through;
-            color: var(--text-secondary);
-            opacity: 0.7;
-        }
-
-        .hw-left-group {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex: 1;
-        }
-
-        .hw-checkbox {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: var(--accent-color);
-        }
-
-        .hw-content {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .hw-subject {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--accent-color);
-            text-transform: uppercase;
-        }
-
-        .hw-text {
-            font-size: 0.92rem;
-            color: var(--text-primary);
-        }
-
-        .hw-date {
-            font-size: 0.72rem;
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
-
-        .btn-delete {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-size: 1rem;
-            padding: 6px;
-        }
-
-        .btn-delete:hover {
-            color: var(--danger-color);
-        }
-
-        /* Settings Card Options */
-        .settings-group {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            padding: 18px;
-            margin-top: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .settings-title {
-            font-weight: 700;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--accent-color);
-        }
-
-        .option-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .option-card {
-            background-color: var(--bg-primary);
-            border: 2px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.88rem;
-        }
-
-        .option-card.active {
-            border-color: var(--accent-color);
-            background-color: var(--accent-light);
-            color: var(--accent-color);
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-            z-index: 100;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal-box {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            width: 100%;
-            max-width: 450px;
-            padding: 24px;
-            box-shadow: var(--shadow-md);
-            position: relative;
-        }
-
-        .modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 16px;
-        }
-
-        .modal-header h2 {
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-
-        .close-modal-btn {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-
-        .error-message {
-            background-color: rgba(239, 68, 68, 0.1);
-            color: var(--danger-color);
-            border: 1px solid var(--danger-color);
-            padding: 10px;
-            border-radius: var(--radius-md);
-            font-size: 0.82rem;
-            margin-bottom: 14px;
-            display: none;
-        }
-
-        /* Bottom Fixed Navigation Bar */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: var(--bg-header);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid var(--border-color);
-            z-index: 40;
-            padding: 8px 0;
-        }
-
-        .nav-grid {
-            max-width: 500px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-        }
-
-        .nav-item {
-            background: none;
-            border: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .nav-item i {
-            font-size: 1.15rem;
-        }
-
-        .nav-item.active {
-            color: var(--accent-color);
-        }
-
-        .hidden {
-            display: none !important;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HSC 1st Year - Academic & Homework Portal</title>
+<!-- FontAwesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{--bg-primary:#f8fafc;--bg-card:#ffffff;--bg-header:rgba(255,255,255,0.9);--text-primary:#0f172a;--text-secondary:#64748b;--border-color:#e2e8f0;--accent-color:#2563eb;--accent-hover:#1d4ed8;--accent-light:#eff6ff;--success-color:#10b981;--danger-color:#ef4444;--shadow-sm:0 1px 3px rgba(0,0,0,0.05);--shadow-md:0 4px 12px rgba(0,0,0,0.08);--radius-lg:16px;--radius-md:10px}
+[data-theme="dark"]{--bg-primary:#0f172a;--bg-card:#1e293b;--bg-header:rgba(30,41,59,0.9);--text-primary:#f8fafc;--text-secondary:#94a3b8;--border-color:#334155;--accent-color:#3b82f6;--accent-hover:#60a5fa;--accent-light:#1e3a8a;--shadow-sm:0 1px 3px rgba(0,0,0,0.3);--shadow-md:0 4px 12px rgba(0,0,0,0.4)}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;transition:background-color .2s ease,color .2s ease,border-color .2s ease}
+body{background-color:var(--bg-primary);color:var(--text-primary);min-height:100vh;padding-bottom:90px}
+.app-container{max-width:800px;margin:0 auto;padding:0 16px}
+header{position:sticky;top:0;z-index:30;background-color:var(--bg-header);backdrop-filter:blur(8px);border-bottom:1px solid var(--border-color);padding:14px 0}
+.header-content{display:flex;align-items:center;justify-content:space-between}
+.brand-logo{display:flex;align-items:center;gap:12px}
+.logo-icon{background-color:var(--accent-color);color:#fff;width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.brand-text h1{font-size:1.15rem;font-weight:700}
+.brand-text p{font-size:.75rem;color:var(--text-secondary)}
+.session-badge{background-color:var(--accent-light);color:var(--accent-color);padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:600;border:1px solid var(--accent-color)}
+.search-trigger-bar{margin-top:14px;background-color:var(--bg-card);border:1px solid var(--border-color);padding:10px 16px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:space-between;cursor:pointer;color:var(--text-secondary);font-size:.9rem;box-shadow:var(--shadow-sm)}
+.search-trigger-bar:hover{border-color:var(--accent-color);color:var(--text-primary)}
+.filter-tabs{display:flex;gap:8px;overflow-x:auto;padding:16px 0 8px 0;scrollbar-width:none}
+.filter-tabs::-webkit-scrollbar{display:none}
+.tab-btn{background-color:var(--bg-card);border:1px solid var(--border-color);color:var(--text-secondary);padding:8px 16px;border-radius:20px;font-size:.82rem;font-weight:600;cursor:pointer;white-space:nowrap}
+.tab-btn.active{background-color:var(--accent-color);color:#fff;border-color:var(--accent-color)}
+.book-list{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+.book-card{background-color:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow-sm);cursor:pointer}
+.book-card:hover{border-color:var(--accent-color);box-shadow:var(--shadow-md)}
+.book-header{display:flex;align-items:center;justify-content:space-between;width:100%}
+.book-info-group{display:flex;align-items:center;gap:14px}
+.book-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;background-color:var(--accent-light);color:var(--accent-color);flex-shrink:0}
+.book-title-area h3{font-size:1rem;font-weight:600}
+.expand-icon{color:var(--text-secondary);font-size:.9rem;transition:transform .3s ease}
+.book-card.open .expand-icon{transform:rotate(90deg);color:var(--accent-color)}
+.parts-container{display:none;border-top:1px dashed var(--border-color);padding-top:12px;justify-content:flex-end;gap:10px}
+.book-card.open .parts-container{display:flex}
+.part-btn{background-color:var(--accent-light);color:var(--accent-color);border:1px solid var(--accent-color);padding:8px 16px;border-radius:var(--radius-md);font-size:.85rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px}
+.part-btn:hover,.part-btn.selected{background-color:var(--accent-color);color:#fff}
+.chapter-view-header{display:flex;align-items:center;gap:12px;margin:16px 0}
+.back-btn{background-color:var(--bg-card);border:1px solid var(--border-color);color:var(--text-primary);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.back-btn:hover{background-color:var(--accent-color);color:#fff}
+.chapter-list{display:flex;flex-direction:column;gap:10px}
+.chapter-item{background-color:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
+.chapter-num{background-color:var(--accent-light);color:var(--accent-color);font-weight:700;font-size:.8rem;padding:4px 8px;border-radius:6px;margin-right:12px;white-space:nowrap}
+.hw-card-input{background-color:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:18px;box-shadow:var(--shadow-sm);margin-bottom:20px;display:flex;flex-direction:column;gap:12px}
+.hw-input-group{display:flex;gap:10px;flex-wrap:wrap}
+.form-input{background-color:var(--bg-primary);border:1px solid var(--border-color);color:var(--text-primary);padding:10px 14px;border-radius:var(--radius-md);font-size:.9rem;outline:none;flex:1;min-width:140px}
+.form-input:focus{border-color:var(--accent-color)}
+.btn-primary{background-color:var(--accent-color);color:#fff;border:none;padding:10px 18px;border-radius:var(--radius-md);font-size:.9rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;justify-content:center}
+.btn-primary:hover{background-color:var(--accent-hover)}
+.hw-item{background-color:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.hw-item.completed .hw-text{text-decoration:line-through;color:var(--text-secondary);opacity:.7}
+.hw-left-group{display:flex;align-items:center;gap:12px;flex:1}
+.hw-checkbox{width:20px;height:20px;cursor:pointer;accent-color:var(--accent-color)}
+.hw-content{display:flex;flex-direction:column;gap:2px}
+.hw-subject{font-size:.75rem;font-weight:700;color:var(--accent-color);text-transform:uppercase}
+.hw-text{font-size:.92rem;color:var(--text-primary)}
+.hw-date{font-size:.72rem;color:var(--text-secondary);margin-top:4px}
+.btn-delete{background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:1rem;padding:6px}
+.btn-delete:hover{color:var(--danger-color)}
+.settings-group{background-color:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:18px;margin-top:14px;display:flex;flex-direction:column;gap:14px}
+.settings-title{font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:8px;color:var(--accent-color)}
+.option-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.option-card{background-color:var(--bg-primary);border:2px solid var(--border-color);border-radius:var(--radius-md);padding:14px;display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600;font-size:.88rem}
+.option-card.active{border-color:var(--accent-color);background-color:var(--accent-light);color:var(--accent-color)}
+.modal-overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;background-color:rgba(0,0,0,0.5);backdrop-filter:blur(4px);z-index:100;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.active{display:flex}
+.modal-box{background-color:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-lg);width:100%;max-width:450px;padding:24px;box-shadow:var(--shadow-md);position:relative}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.modal-header h2{font-size:1.1rem;font-weight:700}
+.close-modal-btn{background:none;border:none;color:var(--text-secondary);font-size:1.2rem;cursor:pointer}
+.error-message{background-color:rgba(239,68,68,0.1);color:var(--danger-color);border:1px solid var(--danger-color);padding:10px;border-radius:var(--radius-md);font-size:.82rem;margin-bottom:14px;display:none}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background-color:var(--bg-header);backdrop-filter:blur(10px);border-top:1px solid var(--border-color);z-index:40;padding:8px 0}
+.nav-grid{max-width:500px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr}
+.nav-item{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--text-secondary);font-size:.75rem;font-weight:600;cursor:pointer}
+.nav-item i{font-size:1.15rem}
+.nav-item.active{color:var(--accent-color)}
+.hidden{display:none !important}
+</style>
 </head>
 <body>
 
-    <header>
-        <div class="app-container">
-            <div class="header-content">
-                <div class="brand-logo">
-                    <div class="logo-icon">
-                        <i class="fa-solid fa-graduation-cap"></i>
-                    </div>
-                    <div class="brand-text">
-                        <h1 id="txtAppTitle">HSC 1st Year</h1>
-                        <p id="txtAppSubtitle">Academic Portal</p>
-                    </div>
-                </div>
-                <span class="session-badge" id="txtSession">Session 2026-2027</span>
-            </div>
+<header>
+  <div class="app-container">
+    <div class="header-content">
+      <div class="brand-logo">
+        <div class="logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+        <div class="brand-text"><h1 id="txtAppTitle">HSC 1st Year</h1><p id="txtAppSubtitle">Academic Portal</p></div>
+      </div>
+      <span class="session-badge" id="txtSession">Session 2026-2027</span>
+    </div>
+    <!-- Search Trigger Bar -->
+    <div class="search-trigger-bar" onclick="openSearchModal()">
+      <span id="txtSearchPlaceholder"><i class="fa-solid fa-magnifying-glass"></i> Search by Book Name, Part & Chapter...</span>
+      <i class="fa-solid fa-sliders"></i>
+    </div>
+  </div>
+</header>
 
-            <!-- Search Trigger Bar -->
-            <div class="search-trigger-bar" onclick="openSearchModal()">
-                <span id="txtSearchPlaceholder"><i class="fa-solid fa-magnifying-glass"></i> Search by Book Name, Part & Chapter...</span>
-                <i class="fa-solid fa-sliders"></i>
-            </div>
-        </div>
-    </header>
+<main class="app-container" style="margin-top: 16px;">
 
-    <main class="app-container" style="margin-top: 16px;">
+  <!-- VIEW 1: HOME PAGE / BOOK LIST -->
+  <section id="homeView">
+    <div class="filter-tabs">
+      <button class="tab-btn active" id="filterAll" onclick="filterGroup('all', this)">All Subjects</button>
+      <button class="tab-btn" id="filterCompulsory" onclick="filterGroup('compulsory', this)">Compulsory</button>
+      <button class="tab-btn" id="filterScience" onclick="filterGroup('science', this)">Science</button>
+      <button class="tab-btn" id="filterCommerce" onclick="filterGroup('commerce', this)">Commerce</button>
+      <button class="tab-btn" id="filterArts" onclick="filterGroup('arts', this)">Humanities</button>
+    </div>
+    <div id="booksGrid" class="book-list"></div>
+  </section>
 
-        <!-- VIEW 1: HOME PAGE / BOOK LIST -->
-        <section id="homeView">
-            <div class="filter-tabs">
-                <button class="tab-btn active" id="filterAll" onclick="filterGroup('all', this)">All Subjects</button>
-                <button class="tab-btn" id="filterCompulsory" onclick="filterGroup('compulsory', this)">Compulsory</button>
-                <button class="tab-btn" id="filterScience" onclick="filterGroup('science', this)">Science</button>
-                <button class="tab-btn" id="filterCommerce" onclick="filterGroup('commerce', this)">Commerce</button>
-                <button class="tab-btn" id="filterArts" onclick="filterGroup('arts', this)">Humanities</button>
-            </div>
+  <!-- VIEW 2: CHAPTER DETAILS VIEW -->
+  <section id="chapterView" class="hidden">
+    <div class="chapter-view-header">
+      <button class="back-btn" onclick="showHomeView()"><i class="fa-solid fa-arrow-left"></i></button>
+      <div>
+        <h2 id="chapterViewTitle">Book Title</h2>
+        <p id="chapterViewSubtitle" style="font-size: 0.8rem; color: var(--text-secondary);">Chapter List</p>
+      </div>
+    </div>
+    <div id="chapterListContainer" class="chapter-list"></div>
+  </section>
 
-            <div id="booksGrid" class="book-list"></div>
-        </section>
+  <!-- VIEW 3: SETTINGS VIEW (Theme & Language) -->
+  <section id="settingsView" class="hidden">
+    <h2 id="txtSettingsHeader" style="font-size: 1.2rem; margin-bottom: 6px;">App Settings</h2>
+    <p id="txtSettingsSub" style="color: var(--text-secondary); font-size: 0.85rem;">Customize your application theme and language preference.</p>
 
-        <!-- VIEW 2: CHAPTER DETAILS VIEW -->
-        <section id="chapterView" class="hidden">
-            <div class="chapter-view-header">
-                <button class="back-btn" onclick="showHomeView()">
-                    <i class="fa-solid fa-arrow-left"></i>
-                </button>
-                <div>
-                    <h2 id="chapterViewTitle">Book Title</h2>
-                    <p id="chapterViewSubtitle" style="font-size: 0.8rem; color: var(--text-secondary);">Chapter List</p>
-                </div>
-            </div>
-
-            <div id="chapterListContainer" class="chapter-list"></div>
-        </section>
-
-        <!-- VIEW 3: SETTINGS VIEW (Theme & Language) -->
-        <section id="settingsView" class="hidden">
-            <h2 id="txtSettingsHeader" style="font-size: 1.2rem; margin-bottom: 6px;">App Settings</h2>
-            <p id="txtSettingsSub" style="color: var(--text-secondary); font-size: 0.85rem;">Customize your application theme and language preference.</p>
-
-            <!-- Option A: Theme Settings -->
-            <div class="settings-group">
-                <div class="settings-title">
-                    <i class="fa-solid fa-circle-half-stroke"></i>
-                    <span id="txtThemeTitle">Theme Mode</span>
-                </div>
-                <div class="option-grid">
-                    <div id="themeLightCard" class="option-card" onclick="setAppTheme('light')">
-                        <i class="fa-solid fa-sun"></i>
-                        <span id="txtThemeLight">Light Theme</span>
-                    </div>
-                    <div id="themeDarkCard" class="option-card" onclick="setAppTheme('dark')">
-                        <i class="fa-solid fa-moon"></i>
-                        <span id="txtThemeDark">Dark Theme</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Option B: Language Settings -->
-            <div class="settings-group">
-                <div class="settings-title">
-                    <i class="fa-solid fa-language"></i>
-                    <span id="txtLangTitle">App Language</span>
-                </div>
-                <div class="option-grid">
-                    <div id="langBnCard" class="option-card" onclick="setAppLanguage('bn')">
-                        <i class="fa-solid fa-flag"></i>
-                        <span>বাংলা (Bengali)</span>
-                    </div>
-                    <div id="langEnCard" class="option-card" onclick="setAppLanguage('en')">
-                        <i class="fa-solid fa-globe"></i>
-                        <span>English</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW 4: HOMEWORK MANAGER -->
-        <section id="homeworkView" class="hidden">
-            <h2 id="txtHwHeader" style="font-size: 1.2rem; margin-bottom: 6px;">Homework Task Manager</h2>
-            <p id="txtHwSub" style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 16px;">Save and track your college tasks.</p>
-
-            <div class="hw-card-input">
-                <div id="txtHwAddTitle" style="font-weight: 600; font-size: 0.9rem; color: var(--text-primary);">
-                    <i class="fa-solid fa-plus-circle" style="color: var(--accent-color);"></i> Add Homework Task
-                </div>
-                <div class="hw-input-group">
-                    <input type="text" id="hwSubjectInput" class="form-input" placeholder="Book / Subject">
-                    <input type="text" id="hwTaskInput" class="form-input" placeholder="Homework Description...">
-                    <button onclick="addHomeworkTask()" class="btn-primary" id="btnSaveHw">
-                        <i class="fa-solid fa-bookmark"></i> Save
-                    </button>
-                </div>
-            </div>
-
-            <div id="homeworkListContainer"></div>
-        </section>
-
-    </main>
-
-    <!-- Modal for Search -->
-    <div id="searchModal" class="modal-overlay">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h2 id="txtModalSearchTitle">Search Book & Chapter</h2>
-                <button class="close-modal-btn" onclick="closeSearchModal()">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <div id="searchError" class="error-message"></div>
-
-            <div style="display: flex; flex-direction: column; gap: 14px;">
-                <!-- 1. Book Name Input -->
-                <div>
-                    <label id="lblSearchBook" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 6px;">Book Name</label>
-                    <input type="text" id="searchBookInput" class="form-input" style="width: 100%;" placeholder="e.g. Physics, হিন্দুধর্ম, ইতিহাস...">
-                </div>
-
-                <!-- 2. Part Selector Options -->
-                <div>
-                    <label id="lblSearchPart" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 6px;">Select Part (Optional)</label>
-                    <div style="display: flex; gap: 10px;">
-                        <button id="searchPart1Btn" class="part-btn" style="flex:1; justify-content:center;" onclick="toggleSearchPart(1)">
-                            <i class="fa-solid fa-book-open"></i> <span id="txtPart1Label">1st Part</span>
-                        </button>
-                        <button id="searchPart2Btn" class="part-btn" style="flex:1; justify-content:center;" onclick="toggleSearchPart(2)">
-                            <i class="fa-solid fa-book-open"></i> <span id="txtPart2Label">2nd Part</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- 3. Chapter Name or Number Input -->
-                <div>
-                    <label id="lblSearchChapter" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 6px;">Chapter Name or Number (Optional)</label>
-                    <input type="text" id="searchChapterInput" class="form-input" style="width: 100%;" placeholder="e.g. শ্রীমদ্ভগবদ্গীতা or 3">
-                </div>
-
-                <button onclick="executeAdvancedSearch()" class="btn-primary" style="margin-top: 6px; width: 100%;" id="btnExecuteSearch">
-                    <i class="fa-solid fa-magnifying-glass"></i> Search Now
-                </button>
-            </div>
-        </div>
+    <div class="settings-group">
+      <div class="settings-title"><i class="fa-solid fa-circle-half-stroke"></i><span id="txtThemeTitle">Theme Mode</span></div>
+      <div class="option-grid">
+        <div id="themeLightCard" class="option-card" onclick="setAppTheme('light')"><i class="fa-solid fa-sun"></i><span id="txtThemeLight">Light Theme</span></div>
+        <div id="themeDarkCard" class="option-card" onclick="setAppTheme('dark')"><i class="fa-solid fa-moon"></i><span id="txtThemeDark">Dark Theme</span></div>
+      </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
-    <nav class="bottom-nav">
-        <div class="nav-grid">
-            <button id="navBtnHome" class="nav-item active" onclick="switchTab('home')">
-                <i class="fa-solid fa-book-open"></i>
-                <span id="txtNavHome">Home</span>
-            </button>
-            <button id="navBtnSettings" class="nav-item" onclick="switchTab('settings')">
-                <i class="fa-solid fa-gear"></i>
-                <span id="txtNavSettings">Settings</span>
-            </button>
-            <button id="navBtnHomework" class="nav-item" onclick="switchTab('homework')">
-                <i class="fa-solid fa-list-check"></i>
-                <span id="txtNavHomework">Homework</span>
-            </button>
+    <div class="settings-group">
+      <div class="settings-title"><i class="fa-solid fa-language"></i><span id="txtLangTitle">App Language</span></div>
+      <div class="option-grid">
+        <div id="langBnCard" class="option-card" onclick="setAppLanguage('bn')"><i class="fa-solid fa-flag"></i><span>বাংলা (Bengali)</span></div>
+        <div id="langEnCard" class="option-card" onclick="setAppLanguage('en')"><i class="fa-solid fa-globe"></i><span>English</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VIEW 4: HOMEWORK MANAGER -->
+  <section id="homeworkView" class="hidden">
+    <h2 id="txtHwHeader" style="font-size: 1.2rem; margin-bottom: 6px;">Homework Task Manager</h2>
+    <p id="txtHwSub" style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 16px;">Save and track your college tasks.</p>
+    <div class="hw-card-input">
+      <div id="txtHwAddTitle" style="font-weight: 600; font-size: 0.9rem; color: var(--text-primary);">
+        <i class="fa-solid fa-plus-circle" style="color: var(--accent-color);"></i> Add Homework Task
+      </div>
+      <div class="hw-input-group">
+        <input type="text" id="hwSubjectInput" class="form-input" placeholder="Book / Subject">
+        <input type="text" id="hwTaskInput" class="form-input" placeholder="Homework Description...">
+        <button onclick="addHomeworkTask()" class="btn-primary" id="btnSaveHw"><i class="fa-solid fa-bookmark"></i> Save</button>
+      </div>
+    </div>
+    <div id="homeworkListContainer"></div>
+  </section>
+
+</main>
+
+<!-- Modal for Search -->
+<div id="searchModal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2 id="txtModalSearchTitle">Search Book & Chapter</h2>
+      <button class="close-modal-btn" onclick="closeSearchModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div id="searchError" class="error-message"></div>
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <div>
+        <label id="lblSearchBook" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 6px;">Book Name</label>
+        <input type="text" id="searchBookInput" class="form-input" style="width: 100%;" placeholder="e.g. Physics, হিন্দুধর্ম, ইতিহাস...">
+      </div>
+      <div>
+        <label id="lblSearchPart" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 6px;">Select Part (Optional)</label>
+        <div style="display: flex; gap: 10px;">
+          <button id="searchPart1Btn" class="part-btn" style="flex:1; justify-content:center;" onclick="toggleSearchPart(1)"><i class="fa-solid fa-book-open"></i> <span id="txtPart1Label">1st Part</span></button>
+          <button id="searchPart2Btn" class="part-btn" style="flex:1; justify-content:center;" onclick="toggleSearchPart(2)"><i class="fa-solid fa-book-open"></i> <span id="txtPart2Label">2nd Part</span></button>
         </div>
-    </nav>
-
-    <script>
-        const i18n = {
-            bn: {
-                appTitle: "এইচএসসি ১ম বর্ষ",
-                appSubtitle: "একাডেমিক পোর্টাল",
-                session: "সেশন ২০২৬-২০২৭",
-                searchPlaceholder: "বইয়ের নাম, পার্ট ও অধ্যায় খুঁজুন...",
-                allSubjects: "সকল বিষয়",
-                compulsory: "আবশ্যিক",
-                science: "বিজ্ঞান",
-                commerce: "ব্যবসায় শিক্ষা",
-                arts: "মানবিক",
-                part1: "১ম পত্র",
-                part2: "২য় পত্র",
-                navHome: "হোম",
-                navSettings: "সেটিং",
-                navHomework: "হোমওয়ার্ক",
-                settingsHeader: "অ্যাপ সেটিংস",
-                settingsSub: "আপনার পছন্দমতো থিম এবং ভাষা নির্বাচন করুন।",
-                themeTitle: "থিম মোড",
-                themeLight: "লাইট থিম",
-                themeDark: "ডার্ক থিম",
-                langTitle: "অ্যাপের ভাষা",
-                hwHeader: "হোমওয়ার্ক ম্যানেজার",
-                hwSub: "আপনার ক্লাসের হোমওয়ার্ক কাজ সেভ, ফিল্টার ও ডিলিট করুন।",
-                hwAddTitle: "নতুন হোমওয়ার্ক যুক্ত করুন",
-                hwSubjectPh: "বই / বিষয়ের নাম",
-                hwTaskPh: "হোমওয়ার্কের কাজ লিখুন...",
-                btnSave: "সেভ করুন",
-                modalSearchTitle: "বই ও অধ্যায় খুঁজুন",
-                lblSearchBook: "বইয়ের নাম",
-                lblSearchPart: "পত্র নির্বাচন (ঐচ্ছিক)",
-                lblSearchChapter: "অধ্যায়ের নাম বা নম্বর (যেমন: শ্রীমদ্ভগবদ্গীতা বা ৩)",
-                btnSearch: "খুঁজুন",
-                errNoBookWithChapter: "এরোর: অধ্যায় নির্বাচন করেছেন কিন্তু বই এর নাম নির্বাচন করেন নি! দয়া করে বই এর নাম লিখুন।",
-                errNoBook: "এরোর: দয়া করে অনুসন্ধানের জন্য বইয়ের নাম লিখুন।",
-                errNotFound: "এরোর: পছন্দসই কোন বই পাওয়া যায়নি।",
-                chPrefix: "অধ্যায়",
-                noHwYet: "কোন হোমওয়ার্ক সেভ করা নেই।"
-            },
-            en: {
-                appTitle: "HSC 1st Year",
-                appSubtitle: "Academic Portal",
-                session: "Session 2026-2027",
-                searchPlaceholder: "Search by Book Name, Part & Chapter...",
-                allSubjects: "All Subjects",
-                compulsory: "Compulsory",
-                science: "Science",
-                commerce: "Commerce",
-                arts: "Humanities",
-                part1: "1st Part",
-                part2: "2nd Part",
-                navHome: "Home",
-                navSettings: "Settings",
-                navHomework: "Homework",
-                settingsHeader: "App Settings",
-                settingsSub: "Customize your application theme and language preference.",
-                themeTitle: "Theme Mode",
-                themeLight: "Light Theme",
-                themeDark: "Dark Theme",
-                langTitle: "App Language",
-                hwHeader: "Homework Manager",
-                hwSub: "Save and track your college tasks.",
-                hwAddTitle: "Add Homework Task",
-                hwSubjectPh: "Book / Subject Name",
-                hwTaskPh: "Homework Description...",
-                btnSave: "Save Task",
-                modalSearchTitle: "Search Book & Chapter",
-                lblSearchBook: "Book Name",
-                lblSearchPart: "Select Part (Optional)",
-                lblSearchChapter: "Chapter Name or Number (e.g. Srimad Bhagavad Gita or 3)",
-                btnSearch: "Search Now",
-                errNoBookWithChapter: "Error: You specified a chapter without selecting a book name! Please specify a book name.",
-                errNoBook: "Error: Please enter a book name to search.",
-                errNotFound: "Error: Could not find any book matching your search.",
-                chPrefix: "Chapter",
-                noHwYet: "No homework tasks added yet."
-            }
-        };
-
-        const booksDataset = [
-            {
-                id: "bangla",
-                name: { bn: "বাংলা", en: "Bangla" },
-                group: "compulsory",
-                icon: "fa-book-bookmark",
-                part1: {
-                    bn: ["১ম অধ্যায়: অনল অনির্বাণ (গদ্য)", "২য় অধ্যায়: অপরিচিতা (ছোটগল্প)", "৩য় অধ্যায়: আমার পথ (প্রবন্ধ)", "৪র্থ অধ্যায়: বিলাসী (গদ্য)", "৫ম অধ্যায়: সোনার তরী (কবিতা)", "৬ষ্ঠ অধ্যায়: বিদ্রোহী (কবিতা)", "৭ম অধ্যায়: লালসালু (উপন্যাস)", "৮ম অধ্যায়: সিরাজউদ্দৌলা (নাটক)"],
-                    en: ["Chapter 1: Anol Anirban (Prose)", "Chapter 2: Oparichita (Short Story)", "Chapter 3: Amar Path (Essay)", "Chapter 4: Bilashi (Prose)", "Chapter 5: Sonar Tori (Poem)", "Chapter 6: Bidrohi (Poem)", "Chapter 7: Lalsalu (Novel)", "Chapter 8: Sirajuddaula (Drama)"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: বাংলা উচ্চারণের নিয়ম", "২য় অধ্যায়: বাংলা বানানের নিয়ম", "৩য় অধ্যায়: ব্যাকরণিক শব্দশ্রেণী", "৪র্থ অধ্যায়: পত্র লিখন ও আবেদনপত্র", "৫ম অধ্যায়: প্রতিবেদন রচনা", "৬ষ্ঠ অধ্যায়: প্রবন্ধ রচনা"],
-                    en: ["Chapter 1: Pronunciation Rules", "Chapter 2: Spelling Rules", "Chapter 3: Grammar Classification", "Chapter 4: Official Letter Writing", "Chapter 5: Report Writing", "Chapter 6: Composition"]
-                }
-            },
-            {
-                id: "english",
-                name: { bn: "ইংরেজি", en: "English" },
-                group: "compulsory",
-                icon: "fa-language",
-                part1: {
-                    bn: ["১ম অধ্যায়: পিপল অর ইনস্টিটিউশন মেকিং হিস্ট্রি", "২য় অধ্যায়: ড্রিমস অ্যান্ড ইমাজিনেশন", "৩য় অধ্যায়: লাইফস্টাইল ও হেলথ", "৪র্থ অধ্যায়: হিউম্যান রাইটস", "৫ম অধ্যায়: ইয়ুথ অ্যান্ড সোশাল লিডারশিপ"],
-                    en: ["Chapter 1: People or Institutions Making History", "Chapter 2: Dreams and Imagination", "Chapter 3: Lifestyle & Health Practices", "Chapter 4: Human Rights & Responsibilities", "Chapter 5: Youth and Social Leadership"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: আর্টিকেল ও প্রেপোজিশন", "২য় অধ্যায়: মডিফায়ার ও কানেক্টরস", "৩য় অধ্যায়: রাইট ফর্ম অব ভার্বস", "৪র্থ অধ্যায়: ট্রান্সফরমেশন অব সেন্টেন্স", "৫ম অধ্যায়: প্যারাগ্রাফ ও রচনা"],
-                    en: ["Chapter 1: Articles and Prepositions", "Chapter 2: Modifiers and Connectors", "Chapter 3: Right Form of Verbs", "Chapter 4: Transformation of Sentences", "Chapter 5: Paragraph and Essay Writing"]
-                }
-            },
-            {
-                id: "ict",
-                name: { bn: "তথ্য ও যোগাযোগ প্রযুক্তি (ICT)", en: "Information & Communication Technology" },
-                group: "compulsory",
-                icon: "fa-laptop-code",
-                part1: {
-                    bn: ["১ম অধ্যায়: বিশ্ব ও বাংলাদেশ প্রেক্ষিত", "২য় অধ্যায়: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং", "৩য় অধ্যায়: সংখ্যা পদ্ধতি ও ডিজিটাল ডিভাইস", "৪র্থ অধ্যায়: ওয়েব ডিজাইন পরিচিতি ও HTML"],
-                    en: ["Chapter 1: Global & Bangladesh Perspective", "Chapter 2: Communication Systems & Networking", "Chapter 3: Number Systems & Digital Devices", "Chapter 4: Web Design Principles & HTML"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: প্রোগ্রামিং ভাষা পরিচিতি", "২য় অধ্যায়: সি (C) প্রোগ্রামিং ভাষা", "৩য় অধ্যায়: ডেটাবেজ ম্যানেজমেন্ট সিস্টেম (DBMS)", "৪র্থ অধ্যায়: প্র্যাকটিক্যাল ল্যাব ও অ্যাপ্লিকেশন"],
-                    en: ["Chapter 1: Programming Language Fundamentals", "Chapter 2: Introduction to C Programming", "Chapter 3: Database Management Systems (DBMS)", "Chapter 4: Practical Coding & Applications"]
-                }
-            },
-            {
-                id: "physics",
-                name: { bn: "পদার্থবিজ্ঞান", en: "Physics" },
-                group: "science",
-                icon: "fa-atom",
-                part1: {
-                    bn: ["১ম অধ্যায়: ভৌতজগৎ ও পরিমাপ", "২য় অধ্যায়: ভেক্টর", "৩য় অধ্যায়: গতিবিদ্যা", "৪র্থ অধ্যায়: নিউটনীয় বলবিজ্ঞান", "৫ম অধ্যায়: কাজ, শক্তি ও ক্ষমতা", "৬ষ্ঠ অধ্যায়: মহাকর্ষ ও অভিকর্ষ", "৭ম অধ্যায়: পদার্থের গাঠনিক ধর্ম", "৮ম অধ্যায়: পর্যায়বৃত্ত গতি"],
-                    en: ["Chapter 1: Physical World and Measurement", "Chapter 2: Vector Analysis & Operations", "Chapter 3: Dynamics & Motion", "Chapter 4: Newtonian Mechanics", "Chapter 5: Work, Energy and Power", "Chapter 6: Gravitation and Gravity", "Chapter 7: Structural Properties of Matter", "Chapter 8: Periodic Motion"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: তাপগতিবিদ্যা", "২য় অধ্যায়: স্থির তড়িৎ", "৩য় অধ্যায়: চল তড়িৎ", "৪র্থ অধ্যায়: তড়িৎ প্রবাহের চৌম্বক ক্রিয়া", "৫ম অধ্যায়: জ্যামিতিক আলোকবিজ্ঞান", "৬ষ্ঠ অধ্যায়: আধুনিক পদার্থবিজ্ঞানের সূচনা"],
-                    en: ["Chapter 1: Thermodynamics", "Chapter 2: Static Electricity", "Chapter 3: Current Electricity", "Chapter 4: Magnetic Effect of Current", "Chapter 5: Geometric Optics", "Chapter 6: Modern Physics & Quantum Mechanics"]
-                }
-            },
-            {
-                id: "chemistry",
-                name: { bn: "রসায়ন", en: "Chemistry" },
-                group: "science",
-                icon: "fa-flask",
-                part1: {
-                    bn: ["১ম অধ্যায়: গবেষণাগারের নিরাপদ ব্যবহার", "২য় অধ্যায়: গুণগত রসায়ন", "৩য় অধ্যায়: মৌলের পর্যায়বৃত্ত ধর্ম ও রাসায়নিক বন্ধন", "৪র্থ অধ্যায়: রাসায়নিক পরিবর্তন", "৫ম অধ্যায়: কর্মমুখী রসায়ন"],
-                    en: ["Chapter 1: Safe Use of Laboratory", "Chapter 2: Qualitative Chemistry", "Chapter 3: Periodic Properties of Elements", "Chapter 4: Chemical Changes & Kinetics", "Chapter 5: Working Chemistry"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: পরিবেশ রসায়ন", "২য় অধ্যায়: জৈব রসায়ন (Organic Chemistry)", "৩য় অধ্যায়: পরিমাণগত রসায়ন", "৪র্থ অধ্যায়: তড়িৎ রসায়ন", "৫ম অধ্যায়: অর্থনৈতিক রসায়ন"],
-                    en: ["Chapter 1: Environmental Chemistry", "Chapter 2: Organic Chemistry Principles", "Chapter 3: Quantitative Chemistry", "Chapter 4: Electrochemistry", "Chapter 5: Economic Chemistry"]
-                }
-            },
-            {
-                id: "higher_math",
-                name: { bn: "উচ্চতর গণিত", en: "Higher Mathematics" },
-                group: "science",
-                icon: "fa-calculator",
-                part1: {
-                    bn: ["১ম অধ্যায়: ম্যাট্রিক্স ও নির্ণায়ক", "২য় অধ্যায়: ভেক্টর", "৩য় অধ্যায়: সরলরেখা", "৪র্থ অধ্যায়: বৃত্ত", "৫ম অধ্যায়: বিন্যাস ও সমাবেশ", "৬ষ্ঠ অধ্যায়: ত্রিকোণমিতিক অনুপাত", "৭ম অধ্যায়: অন্তরী করণ (Differentiation)", "৮ম অধ্যায়: যৌগজীকরণ (Integration)"],
-                    en: ["Chapter 1: Matrices and Determinants", "Chapter 2: Vectors", "Chapter 3: Straight Lines", "Chapter 4: Circles and Equations", "Chapter 5: Permutation & Combination", "Chapter 6: Trigonometric Ratios", "Chapter 7: Calculus - Differentiation", "Chapter 8: Calculus - Integration"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: বাস্তব সংখ্যা ও অসমতা", "২য় অধ্যায়: বহুপদী ও বহুপদী সমীকরণ", "৩য় অধ্যায়: জটিল সংখ্যা", "৪র্থ অধ্যায়: স্থিতিবিদ্যা", "৫ম অধ্যায়: গতিবিদ্যা"],
-                    en: ["Chapter 1: Real Numbers and Inequalities", "Chapter 2: Polynomials & Polynomial Equations", "Chapter 3: Complex Numbers", "Chapter 4: Statics", "Chapter 5: Dynamics of Particles"]
-                }
-            },
-            {
-                id: "biology",
-                name: { bn: "জীববিজ্ঞান", en: "Biology" },
-                group: "science",
-                icon: "fa-seedling",
-                part1: {
-                    bn: ["১ম অধ্যায়: কোষ ও এর গঠন", "২য় অধ্যায়: কোষ বিভাজন", "৩য় অধ্যায়: কোষ রসায়ন", "৪র্থ অধ্যায়: অনুজীব", "৫ম অধ্যায়: উদ্ভিদ শারীরতত্ত্ব"],
-                    en: ["Chapter 1: Cell Structure and Function", "Chapter 2: Cell Division", "Chapter 3: Cell Chemistry", "Chapter 4: Microorganisms", "Chapter 5: Plant Physiology"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: প্রাণীর বিভিন্নতা ও শ্রেণীবিন্যাস", "২য় অধ্যায়: প্রাণীর পরিচিতি (হাইড্রা, রুই মাছ, ঘাসফড়িং)", "৩য় অধ্যায়: মানব শারীরতত্ত্ব: পরিপাক ও শোষণ", "৪র্থ অধ্যায়: রক্ত ও সঞ্চালন", "৫ম অধ্যায়: জিনতত্ত্ব ও বিবর্তন"],
-                    en: ["Chapter 1: Animal Diversity & Classification", "Chapter 2: Animal Introduction", "Chapter 3: Human Digestive System", "Chapter 4: Blood and Circulation", "Chapter 5: Genetics and Evolution"]
-                }
-            },
-            {
-                id: "agriculture",
-                name: { bn: "কৃষি শিক্ষা", en: "Agriculture Studies" },
-                group: "science",
-                icon: "fa-wheat-awn",
-                part1: {
-                    bn: ["১ম অধ্যায়: বাংলাদেশের কৃষি", "২য় অধ্যায়: কৃষি প্রযুক্তি ও যন্ত্রপাতি", "৩য় অধ্যায়: বিশেষ উৎপাদন প্রযুক্তি", "৪র্থ অধ্যায়: কৃষি ও জলবায়ু"],
-                    en: ["Chapter 1: Agriculture in Bangladesh", "Chapter 2: Agricultural Technology & Implements", "Chapter 3: Special Production Technology", "Chapter 4: Agriculture and Climate"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: মৎস্য চাষ (Fish Farming)", "২য় অধ্যায়: পোল্ট্রি উৎপাদন", "৩য় অধ্যায়: গবাদিপশু পালন", "৪র্থ অধ্যায়: সামাজিক বনায়ন"],
-                    en: ["Chapter 1: Fish Farming / Aquaculture", "Chapter 2: Poultry Production", "Chapter 3: Livestock Rearing", "Chapter 4: Social Forestry"]
-                }
-            },
-            {
-                id: "statistics",
-                name: { bn: "পরিসংখ্যান", en: "Statistics" },
-                group: "science",
-                icon: "fa-chart-simple",
-                part1: {
-                    bn: ["১ম অধ্যায়: পরিসংখ্যান, চলক ও সংকেত", "২য় অধ্যায়: তথ্য সংগ্রহ ও উপস্থাপন", "৩য় অধ্যায়: কেন্দ্রীয় প্রবণতার পরিমাপ", "৪র্থ অধ্যায়: বিস্তার পরিমাপ"],
-                    en: ["Chapter 1: Introduction to Statistics & Variables", "Chapter 2: Data Collection & Presentation", "Chapter 3: Measures of Central Tendency", "Chapter 4: Measures of Dispersion"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: সম্ভাবনা (Probability)", "২য় অধ্যায়: দৈব চলক ও গাণিতিক প্রত্যাশা", "৩য় অধ্যায়: দ্বিপ্রদী ও পয়েসন বণ্টন", "৪র্থ অধ্যায়: পরিমিত বণ্টন"],
-                    en: ["Chapter 1: Probability Concepts", "Chapter 2: Random Variable & Expectation", "Chapter 3: Binomial and Poisson Distribution", "Chapter 4: Normal Distribution"]
-                }
-            },
-            {
-                id: "accounting",
-                name: { bn: "হিসাববিজ্ঞান", en: "Accounting" },
-                group: "commerce",
-                icon: "fa-file-invoice-dollar",
-                part1: {
-                    bn: ["১ম অধ্যায়: হিসাববিজ্ঞান পরিচিতি", "২য় অধ্যায়: হিসাবের বইসমূহ", "৩য় অধ্যায়: ব্যাংক সমন্বয় বিবরণী", "৪র্থ অধ্যায়: রেওয়ামিল", "৫ম অধ্যায়: কার্যপত্র (Work Sheet)"],
-                    en: ["Chapter 1: Accounting Overview", "Chapter 2: Books of Accounts", "Chapter 3: Bank Reconciliation Statement", "Chapter 4: Trial Balance", "Chapter 5: Work Sheet & Adjustments"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: অবচয় (Depreciation)", "২য় অধ্যায়: অংশীদারি কারবারের হিসাব", "৩য় অধ্যায়: যৌথ মূলধনী কোম্পানির মূলধন", "৪র্থ অধ্যায়: আর্থিক বিবরণী বিশ্লেষণ"],
-                    en: ["Chapter 1: Depreciation", "Chapter 2: Partnership Accounting", "Chapter 3: Joint Stock Company Capital", "Chapter 4: Financial Statement Analysis"]
-                }
-            },
-            {
-                id: "logic",
-                name: { bn: "যুক্তিবিদ্যা", en: "Logic" },
-                group: "arts",
-                icon: "fa-brain",
-                part1: {
-                    bn: ["১ম অধ্যায়: যুক্তিবিদ্যা পরিচিতি", "২য় অধ্যায়: যুক্তিবিদ্যার অবধারণ ও পদ", "৩য় অধ্যায়: যুক্তির উপাদান", "৪র্থ অধ্যায়: অবরোহ অনুমান (Deductive Reasoning)", "৫ম অধ্যায়: সহানুমান (Syllogism)"],
-                    en: ["Chapter 1: Introduction to Logic", "Chapter 2: Terms and Propositions", "Chapter 3: Elements of Argument", "Chapter 4: Deductive Inference", "Chapter 5: Syllogism Principles"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: আরোহ অনুমান ও এর প্রকারভেদ", "২য় অধ্যায়: আরোহের বস্তুগত ভিত্তি", "৩য় অধ্যায়: কার্যকারণ সম্বন্ধ", "৪র্থ অধ্যায়: প্রকল্প (Hypothesis)", "৫ম অধ্যায়: প্রাকল্পিক ও বৈকল্পিক যুক্তি"],
-                    en: ["Chapter 1: Inductive Logic & Types", "Chapter 2: Material Basis of Induction", "Chapter 3: Causation & Principles", "Chapter 4: Hypothesis Testing", "Chapter 5: Conditional Logic"]
-                }
-            },
-            {
-                id: "civics",
-                name: { bn: "পৌরনীতি ও সুশাসন", en: "Civics & Good Governance" },
-                group: "arts",
-                icon: "fa-landmark",
-                part1: {
-                    bn: ["১ম অধ্যায়: পৌরনীতি ও সুশাসন পরিচিতি", "২য় অধ্যায়: সুশাসন (Good Governance)", "৩য় অধ্যায়: মূল্যবোধ, আইন, স্বাধীনতা ও সাম্য", "৪র্থ অধ্যায়: ই-গভর্নেন্স ও সুশাসন"],
-                    en: ["Chapter 1: Introduction to Civics & Good Governance", "Chapter 2: Good Governance Concepts", "Chapter 3: Values, Law, Liberty and Equality", "Chapter 4: E-Governance & Administration"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: ব্রিটিশ ভারতে প্রতিনিধিত্বশীল সরকারের বিকাশ", "২য় অধ্যায়: পাকিস্তান থেকে বাংলাদেশ (১৯৪৭-১৯৭১)", "৩য় অধ্যায়: বাংলাদেশের সংবিধান", "৪র্থ অধ্যায়: সরকার কাঠামো"],
-                    en: ["Chapter 1: Growth of Representative Government", "Chapter 2: From Pakistan to Bangladesh (1947-1971)", "Chapter 3: Constitution of Bangladesh", "Chapter 4: Organs of Government"]
-                }
-            },
-            {
-                id: "economics",
-                name: { bn: "অর্থনীতি", en: "Economics" },
-                group: "arts",
-                icon: "fa-chart-pie",
-                part1: {
-                    bn: ["১ম অধ্যায়: মৌলিক অর্থনৈতিক সমস্যা এবং এর সমাধান", "২য় অধ্যায়: ভোক্তা ও উৎপাদকের আচরণ", "৩য় অধ্যায়: উৎপাদন, উৎপাদন ব্যয় ও আয়", "৪র্থ অধ্যায়: বাজার (Market)"],
-                    en: ["Chapter 1: Basic Economic Problems & Solutions", "Chapter 2: Consumer and Producer Behavior", "Chapter 3: Production and Costs", "Chapter 4: Market Dynamics"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: বাংলাদেশের অর্থনীতি পরিচিতি", "২য় অধ্যায়: বাংলাদেশের কৃষি", "৩য় অধ্যায়: অর্থ ও ব্যাংক ব্যবস্থা", "৪র্থ অধ্যায়: সরকারি অর্থব্যবস্থা"],
-                    en: ["Chapter 1: Overview of Bangladesh Economy", "Chapter 2: Agriculture of Bangladesh", "Chapter 3: Money and Banking System", "Chapter 4: Public Finance"]
-                }
-            },
-            {
-                id: "sociology",
-                name: { bn: "সমাজবিজ্ঞান", en: "Sociology" },
-                group: "arts",
-                icon: "fa-users",
-                part1: {
-                    bn: ["১ম অধ্যায়: সমাজবিজ্ঞানের উৎপত্তি ও বিকাশ", "২য় অধ্যায়: সমাজবিজ্ঞানের প্রাসঙ্গিকতা", "৩য় অধ্যায়: সমাজবিজ্ঞানীদের মতবাদ", "৪র্থ অধ্যায়: সমাজবিজ্ঞানের মূল প্রত্যয়"],
-                    en: ["Chapter 1: Origin and Development of Sociology", "Chapter 2: Scope & Relevance of Sociology", "Chapter 3: Theoretical Perspectives of Sociologists", "Chapter 4: Basic Concepts of Sociology"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: বাংলাদেশের সংস্কৃতি ও সমাজ", "২য় অধ্যায়: বাংলাদেশের সামাজিক পরিবর্তন", "৩য় অধ্যায়: বিবাহ, পরিবার ও জ্ঞাতি সম্পর্ক", "৪র্থ অধ্যায়: বাংলাদেশের সামাজিক সমস্যা"],
-                    en: ["Chapter 1: Culture and Society of Bangladesh", "Chapter 2: Social Change in Bangladesh", "Chapter 3: Marriage, Family and Kinship", "Chapter 4: Social Problems in Bangladesh"]
-                }
-            },
-            {
-                id: "social_work",
-                name: { bn: "সমাজকর্ম", en: "Social Work" },
-                group: "arts",
-                icon: "fa-hand-holding-hand",
-                part1: {
-                    bn: ["১ম অধ্যায়: সমাজকর্মের ধারণা, লক্ষ্য ও উদ্দেশ্য", "২য় অধ্যায়: সমাজকর্ম পেশার ইতিহাস", "৩য় অধ্যায়: সমাজকর্মের সাথে সংশ্লিষ্ট মৌলিক ধারণা", "৪র্থ অধ্যায়: সমাজকর্মের মূল্যবোধ ও নীতিবোধ"],
-                    en: ["Chapter 1: Concept, Goals and Objectives of Social Work", "Chapter 2: History of Social Work Profession", "Chapter 3: Related Concepts of Social Work", "Chapter 4: Values and Ethics of Social Work"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: বাংলাদেশে সমাজকর্মের প্রয়োগ ক্ষেত্র", "২য় অধ্যায়: মৌলিক মানবিক চাহিদা", "৩য় অধ্যায়: বাংলাদেশের সমাজসেবা কার্যক্রম", "৪র্থ অধ্যায়: সামাজিক আইন ও সামাজিক নীতি"],
-                    en: ["Chapter 1: Fields of Social Work Practice in Bangladesh", "Chapter 2: Basic Human Needs", "Chapter 3: Social Services Programs in Bangladesh", "Chapter 4: Social Legislation and Policy"]
-                }
-            },
-            {
-                id: "geography",
-                name: { bn: "ভূগোল", en: "Geography" },
-                group: "arts",
-                icon: "fa-earth-americas",
-                part1: {
-                    bn: ["১ম অধ্যায়: প্রাকৃতিক ভূগোল পরিচিতি", "২য় অধ্যায়: পৃথিবীর গঠন ও গাঠনিক রূপ", "৩য় অধ্যায়: ভূমিরূপ পরিবর্তন", "৪র্থ অধ্যায়: বায়ুমণ্ডল ও জলবায়ু"],
-                    en: ["Chapter 1: Introduction to Physical Geography", "Chapter 2: Internal Structure & Form of the Earth", "Chapter 3: Landform Changes", "Chapter 4: Atmosphere and Climate Systems"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: মানব ভূগোল", "২য় অধ্যায়: জনসংখ্যা", "৩য় অধ্যায়: বসতি (Human Settlement)", "৪র্থ অধ্যায়: অর্থনৈতিক কার্যাবলী"],
-                    en: ["Chapter 1: Introduction to Human Geography", "Chapter 2: Population Geography & Dynamics", "Chapter 3: Human Settlement Types", "Chapter 4: Economic Activities"]
-                }
-            },
-            {
-                id: "islamic_studies",
-                name: { bn: "ইসলাম শিক্ষা", en: "Islamic Studies" },
-                group: "arts",
-                icon: "fa-kaaba",
-                part1: {
-                    bn: ["১ম অধ্যায়: ইসলামী শিক্ষা ও সংস্কৃতি", "২য় অধ্যায়: শরীয়তের উৎস (কুরআন ও হাদিস)", "৩য় অধ্যায়: পারিবারিক ও সামাজিক জীবন", "৪র্থ অধ্যায়: ইসলামী অর্থনীতি ও সমাজ ব্যবস্থা"],
-                    en: ["Chapter 1: Islamic Education and Culture", "Chapter 2: Sources of Shariah (Quran & Hadith)", "Chapter 3: Family and Social Life in Islam", "Chapter 4: Islamic Economic System"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: আল-কুরআন অধ্যয়ন", "২য় অধ্যায়: আল-হাদিস অধ্যয়ন", "৩য় অধ্যায়: ইসলামী ফিকহ ও আইনি ব্যবস্থা", "৪র্থ অধ্যায়: মানবসেবা ও নৈতিক জীবন"],
-                    en: ["Chapter 1: Al-Quran Studies", "Chapter 2: Al-Hadith Studies", "Chapter 3: Islamic Jurisprudence (Fiqh)", "Chapter 4: Moral Values & Human Service"]
-                }
-            },
-            {
-                id: "hindu_studies",
-                name: { bn: "হিন্দুধর্ম ও নৈতিক শিক্ষা", en: "Hindu Studies & Moral Education" },
-                group: "arts",
-                icon: "fa-om",
-                part1: {
-                    bn: ["১ম অধ্যায়: ঈশ্বর ও সৃষ্টি তত্ত্ব", "২য় অধ্যায়: হিন্দুধর্মের উৎস ও ধর্মগ্রন্থ", "৩য় অধ্যায়: শ্রীমদ্ভগবদ্গীতা ও তার মহত্ত্ব", "৪র্থ অধ্যায়: অবতারবাদ ও দেব-দেবী"],
-                    en: ["Chapter 1: Concept of God & Creation", "Chapter 2: Sources of Hinduism & Sacred Texts", "Chapter 3: Srimad Bhagavad Gita & Significance", "Chapter 4: Avataras and Deities"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: পারিবারিক ও সামাজিক সদাচার", "২য় অধ্যায়: ধর্মীয় উৎসব ও পার্বণ", "৩য় অধ্যায়: যোগ সাধনা ও মুক্তি", "৪র্থ অধ্যায়: হিন্দু ধর্মীয় মূল্যবোধ ও নৈতিকতা"],
-                    en: ["Chapter 1: Family and Social Virtues", "Chapter 2: Religious Festivals & Rituals", "Chapter 3: Yoga Practice & Salvation", "Chapter 4: Hindu Values & Ethics"]
-                }
-            },
-            {
-                id: "christian_studies",
-                name: { bn: "খ্রিস্টধর্ম ও নৈতিক শিক্ষা", en: "Christian Studies & Moral Education" },
-                group: "arts",
-                icon: "fa-cross",
-                part1: {
-                    bn: ["১ম অধ্যায়: ঈশ্বর তত্ত্ব ও সৃষ্টি", "২য় অধ্যায়: পবিত্র বাইবেল পরিচিতি", "৩য় অধ্যায়: যীশু খ্রীষ্টের জীবন ও শিক্ষা", "৪র্থ অধ্যায়: খ্রীষ্টীয় মণ্ডলী ও সমাজ"],
-                    en: ["Chapter 1: Theology & Creation", "Chapter 2: Introduction to Holy Bible", "Chapter 3: Life and Teachings of Jesus Christ", "Chapter 4: Christian Church & Community"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: খ্রীষ্টীয় সেবা ও বিশ্বস্ততা", "২য় অধ্যায়: দশ আজ্ঞা ও আদেশসমূহ", "৩য় অধ্যায়: নৈতিক মূল্যবোধ ও চরিত্র গঠন", "৪র্থ অধ্যায়: আধুনিক বিশ্ব ও খ্রীষ্টীয় আদর্শ"],
-                    en: ["Chapter 1: Christian Service & Stewardship", "Chapter 2: The Ten Commandments", "Chapter 3: Moral Values & Character Building", "Chapter 4: Modern World & Christian Ethics"]
-                }
-            },
-            {
-                id: "buddhist_studies",
-                name: { bn: "বৌদ্ধধর্ম ও নৈতিক শিক্ষা", en: "Buddhist Studies & Moral Education" },
-                group: "arts",
-                icon: "fa-dharmachakra",
-                part1: {
-                    bn: ["১ম অধ্যায়: গৌতম বুদ্ধের জীবন ও দর্শন", "২য় অধ্যায়: চার আর্যসত্য ও আর্য অষ্টাঙ্গিক মার্গ", "৩য় অধ্যায়: ত্রিপিটক পরিচিতি", "৪র্থ অধ্যায়: সংঘ ও বৌদ্ধ ঐতিহ্য"],
-                    en: ["Chapter 1: Life and Philosophy of Gautama Buddha", "Chapter 2: Four Noble Truths & Eightfold Path", "Chapter 3: Introduction to Tipitaka", "Chapter 4: Sangha & Buddhist Heritage"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: শীল, সমাধি ও প্রজ্ঞা", "২য় অধ্যায়: অহিংসা ও পরিবেশ ভাবনা", "৩য় অধ্যায়: বৌদ্ধ সংস্কৃতি ও উৎসব", "৪র্থ অধ্যায়: নৈতিক জীবন গঠন"],
-                    en: ["Chapter 1: Sila, Samadhi and Panna", "Chapter 2: Non-violence & Environmental Care", "Chapter 3: Buddhist Culture & Festivals", "Chapter 4: Moral Character Development"]
-                }
-            },
-            {
-                id: "home_science",
-                name: { bn: "গার্হস্থ্য বিজ্ঞান", en: "Home Science" },
-                group: "arts",
-                icon: "fa-house-user",
-                part1: {
-                    bn: ["১ম অধ্যায়: গৃহ ব্যবস্থাপনা ও সম্পদ ব্যবস্থাপনা", "২য় অধ্যায়: পরিবার ও সময় ব্যবস্থাপনা", "৩য় অধ্যায়: গৃহের অভ্যন্তরীণ সজ্জা", "৪র্থ অধ্যায়: শিশু বিকাশ ও মানসিক স্বাস্থ্য"],
-                    en: ["Chapter 1: Home & Resource Management", "Chapter 2: Family & Time Management", "Chapter 3: Interior Design & Home Decor", "Chapter 4: Child Development & Mental Health"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: খাদ্য, পুষ্টি ও পরিপাক", "২য় অধ্যায়: খাদ্য পরিকল্পনা ও পরিবেশন", "৩য় অধ্যায়: বস্ত্র শিল্প ও তন্তু পরিচিতি", "৪র্থ অধ্যায়: পোশাকের যত্ন ও রক্ষণাবেক্ষণ"],
-                    en: ["Chapter 1: Food, Nutrition and Digestion", "Chapter 2: Meal Planning & Service", "Chapter 3: Textile Science & Fiber Study", "Chapter 4: Clothing Care & Maintenance"]
-                }
-            },
-            {
-                id: "history",
-                name: { bn: "ইতিহাস", en: "History" },
-                group: "arts",
-                icon: "fa-monument",
-                part1: {
-                    bn: ["১ম অধ্যায়: উপমহাদেশে ইউরোপীয়দের আগমন", "২য় অধ্যায়: ইংরেজ শাসন ও ঔপনিবেশিক প্রভাব", "৩য় অধ্যায়: ভারতীয় জাতীয়তাবাদী আন্দোলন", "৪র্থ অধ্যায়: ১৯৪৭ সালের দেশভাগ ও ফলাফল"],
-                    en: ["Chapter 1: Arrival of Europeans in Subcontinent", "Chapter 2: British Rule & Colonial Impact", "Chapter 3: Indian Nationalist Movement", "Chapter 4: Partition of 1947 & Aftermath"]
-                },
-                part2: {
-                    bn: ["১ম অধ্যায়: ফরাসি বিপ্লব ও শিল্প বিপ্লব", "২য় অধ্যায়: প্রথম বিশ্বযুদ্ধ ও লীগ অব নেশনস", "৩য় অধ্যায়: দ্বিতীয় বিশ্বযুদ্ধ ও জাতিসংঘ", "৪র্থ অধ্যায়: স্নায়ুযুদ্ধ ও আধুনিক বিশ্ব"],
-                    en: ["Chapter 1: French Revolution & Industrial Revolution", "Chapter 2: World War I & League of Nations", "Chapter 3: World War II & United Nations", "Chapter 4: Cold War & Modern World"]
-                }
-            }
-        ];
-
-        let currentLang = 'bn';
-        let currentFilterGroup = 'all';
-        let selectedSearchPart = null;
-        let homeworkTasks = [];
-
-        window.onload = function() {
-            initAppSettings();
-            renderBookList();
-            loadHomeworksFromStorage();
-        };
-
-        function initAppSettings() {
-            const savedLang = localStorage.getItem('hsc_app_lang') || 'bn';
-            const savedTheme = localStorage.getItem('hsc_app_theme') || 'light';
-            setAppLanguage(savedLang, false);
-            setAppTheme(savedTheme);
-        }
-
-        function setAppLanguage(lang, reRender = true) {
-            currentLang = lang;
-            localStorage.setItem('hsc_app_lang', lang);
-            document.documentElement.lang = lang;
-
-            const dict = i18n[lang];
-
-            // Header elements
-            document.getElementById('txtAppTitle').innerText = dict.appTitle;
-            document.getElementById('txtAppSubtitle').innerText = dict.appSubtitle;
-            document.getElementById('txtSession').innerText = dict.session;
-            document.getElementById('txtSearchPlaceholder').innerHTML = `<i class="fa-solid fa-magnifying-glass"></i> ${dict.searchPlaceholder}`;
-
-            // Filter Tabs
-            document.getElementById('filterAll').innerText = dict.allSubjects;
-            document.getElementById('filterCompulsory').innerText = dict.compulsory;
-            document.getElementById('filterScience').innerText = dict.science;
-            document.getElementById('filterCommerce').innerText = dict.commerce;
-            document.getElementById('filterArts').innerText = dict.arts;
-
-            // Nav Labels
-            document.getElementById('txtNavHome').innerText = dict.navHome;
-            document.getElementById('txtNavSettings').innerText = dict.navSettings;
-            document.getElementById('txtNavHomework').innerText = dict.navHomework;
-
-            // Settings Page Labels
-            document.getElementById('txtSettingsHeader').innerText = dict.settingsHeader;
-            document.getElementById('txtSettingsSub').innerText = dict.settingsSub;
-            document.getElementById('txtThemeTitle').innerText = dict.themeTitle;
-            document.getElementById('txtThemeLight').innerText = dict.themeLight;
-            document.getElementById('txtThemeDark').innerText = dict.themeDark;
-            document.getElementById('txtLangTitle').innerText = dict.langTitle;
-
-            // Homework Labels
-            document.getElementById('txtHwHeader').innerText = dict.hwHeader;
-            document.getElementById('txtHwSub').innerText = dict.hwSub;
-            document.getElementById('txtHwAddTitle').innerHTML = `<i class="fa-solid fa-plus-circle" style="color: var(--accent-color);"></i> ${dict.hwAddTitle}`;
-            document.getElementById('hwSubjectInput').placeholder = dict.hwSubjectPh;
-            document.getElementById('hwTaskInput').placeholder = dict.hwTaskPh;
-            document.getElementById('btnSaveHw').innerHTML = `<i class="fa-solid fa-bookmark"></i> ${dict.btnSave}`;
-
-            // Modal Labels
-            document.getElementById('txtModalSearchTitle').innerText = dict.modalSearchTitle;
-            document.getElementById('lblSearchBook').innerText = dict.lblSearchBook;
-            document.getElementById('lblSearchPart').innerText = dict.lblSearchPart;
-            document.getElementById('lblSearchChapter').innerText = dict.lblSearchChapter;
-            document.getElementById('txtPart1Label').innerText = dict.part1;
-            document.getElementById('txtPart2Label').innerText = dict.part2;
-            document.getElementById('btnExecuteSearch').innerHTML = `<i class="fa-solid fa-magnifying-glass"></i> ${dict.btnSearch}`;
-
-            // Active Card UI
-            const bnCard = document.getElementById('langBnCard');
-            const enCard = document.getElementById('langEnCard');
-            if (lang === 'bn') {
-                bnCard.classList.add('active');
-                enCard.classList.remove('active');
-            } else {
-                enCard.classList.add('active');
-                bnCard.classList.remove('active');
-            }
-
-            if (reRender) {
-                renderBookList();
-                renderHomeworkList();
-            }
-        }
-
-        function setAppTheme(mode) {
-            document.documentElement.setAttribute('data-theme', mode);
-            localStorage.setItem('hsc_app_theme', mode);
-
-            const lightCard = document.getElementById('themeLightCard');
-            const darkCard = document.getElementById('themeDarkCard');
-
-            if (mode === 'dark') {
-                darkCard.classList.add('active');
-                lightCard.classList.remove('active');
-            } else {
-                lightCard.classList.add('active');
-                darkCard.classList.remove('active');
-            }
-        }
-
-        function renderBookList() {
-            const container = document.getElementById('booksGrid');
-            container.innerHTML = '';
-
-            const filteredBooks = booksDataset.filter(book => {
-                return currentFilterGroup === 'all' || book.group === currentFilterGroup;
-            });
-
-            const dict = i18n[currentLang];
-
-            filteredBooks.forEach(book => {
-                const card = document.createElement('div');
-                card.className = 'book-card';
-                card.setAttribute('onclick', 'toggleBookCard(this, event)');
-                card.innerHTML = `
-                    <div class="book-header">
-                        <div class="book-info-group">
-                            <div class="book-icon">
-                                <i class="fa-solid ${book.icon}"></i>
-                            </div>
-                            <div class="book-title-area">
-                                <h3>${book.name[currentLang]}</h3>
-                            </div>
-                        </div>
-                        <i class="fa-solid fa-chevron-right expand-icon"></i>
-                    </div>
-                    <div class="parts-container">
-                        <button class="part-btn" onclick="openChapterList('${book.id}', 1, null, event)">
-                            <i class="fa-solid fa-book-open"></i> ${dict.part1}
-                        </button>
-                        <button class="part-btn" onclick="openChapterList('${book.id}', 2, null, event)">
-                            <i class="fa-solid fa-book-open"></i> ${dict.part2}
-                        </button>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function toggleBookCard(cardElement, event) {
-            if (event.target.closest('.part-btn')) return;
-            cardElement.classList.toggle('open');
-        }
-
-        function filterGroup(groupName, buttonElement) {
-            currentFilterGroup = groupName;
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            buttonElement.classList.add('active');
-            renderBookList();
-        }
-
-        function openChapterList(bookId, partNumber, targetChapterQuery = null, event = null) {
-            if (event) event.stopPropagation();
-
-            const book = booksDataset.find(b => b.id === bookId);
-            if (!book) return;
-
-            const dict = i18n[currentLang];
-
-            document.getElementById('homeView').classList.add('hidden');
-            document.getElementById('settingsView').classList.add('hidden');
-            document.getElementById('homeworkView').classList.add('hidden');
-            document.getElementById('chapterView').classList.remove('hidden');
-
-            const partTitleText = partNumber === 1 ? dict.part1 : dict.part2;
-            document.getElementById('chapterViewTitle').innerText = `${book.name[currentLang]} (${partTitleText})`;
-            document.getElementById('chapterViewSubtitle').innerText = `${dict.appSubtitle} - ${partTitleText}`;
-
-            const chapters = partNumber === 1 ? book.part1[currentLang] : book.part2[currentLang];
-            const container = document.getElementById('chapterListContainer');
-            container.innerHTML = '';
-
-            let matchedIdx = -1;
-            if (targetChapterQuery) {
-                const normalizedQuery = normalizeNumerals(targetChapterQuery.toString().trim().toLowerCase());
-                const isNumeric = /^\d+$/.test(normalizedQuery);
-
-                if (isNumeric) {
-                    matchedIdx = parseInt(normalizedQuery) - 1;
-                } else {
-                    matchedIdx = chapters.findIndex(ch => ch.toLowerCase().includes(normalizedQuery));
-                }
-            }
-
-            chapters.forEach((chapterText, idx) => {
-                const isMatchedChapter = matchedIdx === idx;
-                const item = document.createElement('div');
-                item.className = 'chapter-item';
-
-                if (isMatchedChapter) {
-                    item.style.borderColor = 'var(--accent-color)';
-                    item.style.backgroundColor = 'var(--accent-light)';
-                }
-
-                item.innerHTML = `
-                    <div style="display: flex; align-items: center;">
-                        <span class="chapter-num">${dict.chPrefix} ${idx + 1}</span>
-                        <span style="font-size: 0.9rem; font-weight: 600;">${chapterText}</span>
-                    </div>
-                    <i class="fa-solid fa-angle-right" style="color: var(--text-secondary);"></i>
-                `;
-                container.appendChild(item);
-            });
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function showHomeView() {
-            document.getElementById('chapterView').classList.add('hidden');
-            document.getElementById('homeView').classList.remove('hidden');
-        }
-
-        function openSearchModal() {
-            selectedSearchPart = null;
-            updateSearchPartButtons();
-            document.getElementById('searchError').style.display = 'none';
-            document.getElementById('searchModal').classList.add('active');
-        }
-
-        function closeSearchModal() {
-            document.getElementById('searchModal').classList.remove('active');
-        }
-
-        function toggleSearchPart(partNum) {
-            if (selectedSearchPart === partNum) {
-                selectedSearchPart = null;
-            } else {
-                selectedSearchPart = partNum;
-            }
-            updateSearchPartButtons();
-        }
-
-        function updateSearchPartButtons() {
-            const btn1 = document.getElementById('searchPart1Btn');
-            const btn2 = document.getElementById('searchPart2Btn');
-
-            btn1.classList.remove('selected');
-            btn2.classList.remove('selected');
-
-            if (selectedSearchPart === 1) btn1.classList.add('selected');
-            if (selectedSearchPart === 2) btn2.classList.add('selected');
-        }
-
-        function normalizeNumerals(str) {
-            const bnNum = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
-            return str.replace(/[০-৯]/g, d => bnNum.indexOf(d));
-        }
-
-        function executeAdvancedSearch() {
-            const bookInput = document.getElementById('searchBookInput').value.trim().toLowerCase();
-            const chapterInput = document.getElementById('searchChapterInput').value.trim();
-            const errorBox = document.getElementById('searchError');
-            const dict = i18n[currentLang];
-
-            errorBox.style.display = 'none';
-
-            if (!bookInput && chapterInput) {
-                errorBox.innerText = dict.errNoBookWithChapter;
-                errorBox.style.display = 'block';
-                return;
-            }
-
-            if (!bookInput) {
-                errorBox.innerText = dict.errNoBook;
-                errorBox.style.display = 'block';
-                return;
-            }
-
-            const matchedBook = booksDataset.find(b => 
-                b.name.bn.toLowerCase().includes(bookInput) || 
-                b.name.en.toLowerCase().includes(bookInput) ||
-                b.id.includes(bookInput)
-            );
-
-            if (!matchedBook) {
-                errorBox.innerText = dict.errNotFound;
-                errorBox.style.display = 'block';
-                return;
-            }
-
-            closeSearchModal();
-
-            const targetPart = selectedSearchPart ? selectedSearchPart : 1;
-
-            if (chapterInput) {
-                openChapterList(matchedBook.id, targetPart, chapterInput);
-            } else {
-                openChapterList(matchedBook.id, targetPart);
-            }
-        }
-
-        function loadHomeworksFromStorage() {
-            const data = localStorage.getItem('hsc_app_homeworks');
-            if (data) {
-                homeworkTasks = JSON.parse(data);
-            } else {
-                const now = new Date();
-                homeworkTasks = [
-                    { 
-                        id: Date.now(), 
-                        subject: "Physics", 
-                        text: "Vector chapter math practice 1-10.",
-                        completed: false,
-                        date: formatDate(now)
-                    },
-                    { 
-                        id: Date.now() + 1, 
-                        subject: "Bangla", 
-                        text: "Read 'Sonar Tori' poem and prepare summary.",
-                        completed: true,
-                        date: formatDate(now)
-                    }
-                ];
-                saveHomeworksToStorage();
-            }
-            renderHomeworkList();
-        }
-
-        function saveHomeworksToStorage() {
-            localStorage.setItem('hsc_app_homeworks', JSON.stringify(homeworkTasks));
-        }
-
-        function formatDate(d) {
-            const dateObj = new Date(d);
-            return dateObj.toLocaleString(currentLang === 'bn' ? 'bn-BD' : 'en-US', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true
-            });
-        }
-
-        function addHomeworkTask() {
-            const subjectInput = document.getElementById('hwSubjectInput');
-            const taskInput = document.getElementById('hwTaskInput');
-
-            if (!taskInput.value.trim()) return;
-
-            const newTask = {
-                id: Date.now(),
-                subject: subjectInput.value.trim() || (currentLang === 'bn' ? "সাধারণ" : "General"),
-                text: taskInput.value.trim(),
-                completed: false,
-                date: formatDate(new Date())
-            };
-
-            homeworkTasks.unshift(newTask);
-            saveHomeworksToStorage();
-            renderHomeworkList();
-
-            subjectInput.value = '';
-            taskInput.value = '';
-        }
-
-        function toggleHomeworkStatus(id) {
-            const task = homeworkTasks.find(t => t.id === id);
-            if (task) {
-                task.completed = !task.completed;
-                saveHomeworksToStorage();
-                renderHomeworkList();
-            }
-        }
-
-        function deleteHomeworkTask(id) {
-            homeworkTasks = homeworkTasks.filter(task => task.id !== id);
-            saveHomeworksToStorage();
-            renderHomeworkList();
-        }
-
-        function renderHomeworkList() {
-            const container = document.getElementById('homeworkListContainer');
-            container.innerHTML = '';
-
-            if (homeworkTasks.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 30px; color: var(--text-secondary);">
-                        <i class="fa-solid fa-clipboard-check" style="font-size: 2rem; margin-bottom: 8px;"></i>
-                        <p>${i18n[currentLang].noHwYet}</p>
-                    </div>
-                `;
-                return;
-            }
-
-            homeworkTasks.forEach(task => {
-                const item = document.createElement('div');
-                item.className = `hw-item ${task.completed ? 'completed' : ''}`;
-                item.innerHTML = `
-                    <div class="hw-left-group">
-                        <input type="checkbox" class="hw-checkbox" ${task.completed ? 'checked' : ''} onchange="toggleHomeworkStatus(${task.id})">
-                        <div class="hw-content">
-                            <span class="hw-subject">${escapeHtml(task.subject)}</span>
-                            <span class="hw-text">${escapeHtml(task.text)}</span>
-                            <span class="hw-date"><i class="fa-regular fa-clock"></i> ${task.date || ''}</span>
-                        </div>
-                    </div>
-                    <button class="btn-delete" onclick="deleteHomeworkTask(${task.id})">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                `;
-                container.appendChild(item);
-            });
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.innerText = text;
-            return div.innerHTML;
-        }
-
-        function switchTab(tabName) {
-            const homeView = document.getElementById('homeView');
-            const chapterView = document.getElementById('chapterView');
-            const settingsView = document.getElementById('settingsView');
-            const homeworkView = document.getElementById('homeworkView');
-
-            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-
-            homeView.classList.add('hidden');
-            chapterView.classList.add('hidden');
-            settingsView.classList.add('hidden');
-            homeworkView.classList.add('hidden');
-
-            if (tabName === 'home') {
-                homeView.classList.remove('hidden');
-                document.getElementById('navBtnHome').classList.add('active');
-            } else if (tabName === 'settings') {
-                settingsView.classList.remove('hidden');
-                document.getElementById('navBtnSettings').classList.add('active');
-            } else if (tabName === 'homework') {
-                homeworkView.classList.remove('hidden');
-                document.getElementById('navBtnHomework').classList.add('active');
-            }
-        }
-    </script>
+      </div>
+      <div>
+        <label id="lblSearchChapter" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 6px;">Chapter Name or Number (Optional)</label>
+        <input type="text" id="searchChapterInput" class="form-input" style="width: 100%;" placeholder="e.g. শ্রীমদ্ভগবদ্গীতা or 3">
+      </div>
+      <button onclick="executeAdvancedSearch()" class="btn-primary" style="margin-top: 6px; width: 100%;" id="btnExecuteSearch"><i class="fa-solid fa-magnifying-glass"></i> Search Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Navigation Bar -->
+<nav class="bottom-nav">
+  <div class="nav-grid">
+    <button id="navBtnHome" class="nav-item active" onclick="switchTab('home')"><i class="fa-solid fa-book-open"></i><span id="txtNavHome">Home</span></button>
+    <button id="navBtnSettings" class="nav-item" onclick="switchTab('settings')"><i class="fa-solid fa-gear"></i><span id="txtNavSettings">Settings</span></button>
+    <button id="navBtnHomework" class="nav-item" onclick="switchTab('homework')"><i class="fa-solid fa-list-check"></i><span id="txtNavHomework">Homework</span></button>
+  </div>
+</nav>
+
+<script>
+const i18n = {
+  bn: {
+    appTitle:"এইচএসসি ১ম বর্ষ", appSubtitle:"একাডেমিক পোর্টাল", session:"সেশন ২০২৬-২০২৭",
+    searchPlaceholder:"বইয়ের নাম, পার্ট ও অধ্যায় খুঁজুন...",
+    allSubjects:"সকল বিষয়", compulsory:"আবশ্যিক", science:"বিজ্ঞান", commerce:"ব্যবসায় শিক্ষা", arts:"মানবিক",
+    part1:"১ম পত্র", part2:"২য় পত্র", allChapters:"সব অধ্যায়",
+    navHome:"হোম", navSettings:"সেটিং", navHomework:"হোমওয়ার্ক",
+    settingsHeader:"অ্যাপ সেটিংস", settingsSub:"আপনার পছন্দমতো থিম এবং ভাষা নির্বাচন করুন।",
+    themeTitle:"থিম মোড", themeLight:"লাইট থিম", themeDark:"ডার্ক থিম", langTitle:"অ্যাপের ভাষা",
+    hwHeader:"হোমওয়ার্ক ম্যানেজার", hwSub:"আপনার ক্লাসের হোমওয়ার্ক কাজ সেভ, ফিল্টার ও ডিলিট করুন।",
+    hwAddTitle:"নতুন হোমওয়ার্ক যুক্ত করুন", hwSubjectPh:"বই / বিষয়ের নাম", hwTaskPh:"হোমওয়ার্কের কাজ লিখুন...", btnSave:"সেভ করুন",
+    modalSearchTitle:"বই ও অধ্যায় খুঁজুন", lblSearchBook:"বইয়ের নাম", lblSearchPart:"পত্র নির্বাচন (ঐচ্ছিক)",
+    lblSearchChapter:"অধ্যায়ের নাম বা নম্বর (যেমন: শ্রীমদ্ভগবদ্গীতা বা ৩)", btnSearch:"খুঁজুন",
+    errNoBookWithChapter:"ত্রুটি: অধ্যায় লিখেছেন কিন্তু বইয়ের নাম লেখেননি! দয়া করে বইয়ের নাম লিখুন।",
+    errNoBook:"ত্রুটি: দয়া করে অনুসন্ধানের জন্য বইয়ের নাম লিখুন।",
+    errNotFound:"ত্রুটি: পছন্দসই কোনো বই পাওয়া যায়নি।",
+    chPrefix:"অধ্যায়", noHwYet:"কোনো হোমওয়ার্ক সেভ করা নেই।"
+  },
+  en: {
+    appTitle:"HSC 1st Year", appSubtitle:"Academic Portal", session:"Session 2026-2027",
+    searchPlaceholder:"Search by Book Name, Part & Chapter...",
+    allSubjects:"All Subjects", compulsory:"Compulsory", science:"Science", commerce:"Commerce", arts:"Humanities",
+    part1:"1st Part", part2:"2nd Part", allChapters:"All Chapters",
+    navHome:"Home", navSettings:"Settings", navHomework:"Homework",
+    settingsHeader:"App Settings", settingsSub:"Customize your application theme and language preference.",
+    themeTitle:"Theme Mode", themeLight:"Light Theme", themeDark:"Dark Theme", langTitle:"App Language",
+    hwHeader:"Homework Manager", hwSub:"Save and track your college tasks.",
+    hwAddTitle:"Add Homework Task", hwSubjectPh:"Book / Subject Name", hwTaskPh:"Homework Description...", btnSave:"Save Task",
+    modalSearchTitle:"Search Book & Chapter", lblSearchBook:"Book Name", lblSearchPart:"Select Part (Optional)",
+    lblSearchChapter:"Chapter Name or Number (e.g. Srimad Bhagavad Gita or 3)", btnSearch:"Search Now",
+    errNoBookWithChapter:"Error: You specified a chapter without selecting a book name! Please specify a book name.",
+    errNoBook:"Error: Please enter a book name to search.",
+    errNotFound:"Error: Could not find any book matching your search.",
+    chPrefix:"Chapter", noHwYet:"No homework tasks added yet."
+  }
+};
+
+/* বই-সংক্রান্ত নোট:
+   - single:true মানে বইটির পত্র ভাগ নেই (যেমন ICT), তাই শুধু একটি "সব অধ্যায়" বোতাম দেখায়।
+   - পদার্থবিজ্ঞান, উচ্চতর গণিত, জীববিজ্ঞান ও ICT-র অধ্যায়ের তালিকা সংশোধন করা হয়েছে। */
+const booksDataset = [
+  {
+    id:"bangla", name:{bn:"বাংলা",en:"Bangla"}, group:"compulsory", icon:"fa-book-bookmark",
+    part1:{
+      bn:["১ম অধ্যায়: অনল অনির্বাণ (গদ্য)","২য় অধ্যায়: অপরিচিতা (ছোটগল্প)","৩য় অধ্যায়: আমার পথ (প্রবন্ধ)","৪র্থ অধ্যায়: বিলাসী (গদ্য)","৫ম অধ্যায়: সোনার তরী (কবিতা)","৬ষ্ঠ অধ্যায়: বিদ্রোহী (কবিতা)","৭ম অধ্যায়: লালসালু (উপন্যাস)","৮ম অধ্যায়: সিরাজউদ্দৌলা (নাটক)"],
+      en:["Chapter 1: Anol Anirban (Prose)","Chapter 2: Oparichita (Short Story)","Chapter 3: Amar Path (Essay)","Chapter 4: Bilashi (Prose)","Chapter 5: Sonar Tori (Poem)","Chapter 6: Bidrohi (Poem)","Chapter 7: Lalsalu (Novel)","Chapter 8: Sirajuddaula (Drama)"]
+    },
+    part2:{
+      bn:["১ম অধ্যায়: বাংলা উচ্চারণের নিয়ম","২য় অধ্যায়: বাংলা বানানের নিয়ম","৩য় অধ্যায়: ব্যাকরণিক শব্দশ্রেণী","৪র্থ অধ্যায়: পত্র লিখন ও আবেদনপত্র","৫ম অধ্যায়: প্রতিবেদন রচনা","৬ষ্ঠ অধ্যায়: প্রবন্ধ রচনা"],
+      en:["Chapter 1: Pronunciation Rules","Chapter 2: Spelling Rules","Chapter 3: Grammar Classification","Chapter 4: Official Letter Writing","Chapter 5: Report Writing","Chapter 6: Composition"]
+    }
+  },
+  {
+    id:"english", name:{bn:"ইংরেজি",en:"English"}, group:"compulsory", icon:"fa-language",
+    part1:{
+      bn:["১ম অধ্যায়: পিপল অর ইনস্টিটিউশন মেকিং হিস্ট্রি","২য় অধ্যায়: ড্রিমস অ্যান্ড ইমাজিনেশন","৩য় অধ্যায়: লাইফস্টাইল ও হেলথ","৪র্থ অধ্যায়: হিউম্যান রাইটস","৫ম অধ্যায়: ইয়ুথ অ্যান্ড সোশাল লিডারশিপ"],
+      en:["Chapter 1: People or Institutions Making History","Chapter 2: Dreams and Imagination","Chapter 3: Lifestyle & Health Practices","Chapter 4: Human Rights & Responsibilities","Chapter 5: Youth and Social Leadership"]
+    },
+    part2:{
+      bn:["১ম অধ্যায়: আর্টিকেল ও প্রেপোজিশন","২য় অধ্যায়: মডিফায়ার ও কানেক্টরস","৩য় অধ্যায়: রাইট ফর্ম অব ভার্বস","৪র্থ অধ্যায়: ট্রান্সফরমেশন অব সেন্টেন্স","৫ম অধ্যায়: প্যারাগ্রাফ ও রচনা"],
+      en:["Chapter 1: Articles and Prepositions","Chapter 2: Modifiers and Connectors","Chapter 3: Right Form of Verbs","Chapter 4: Transformation of Sentences","Chapter 5: Paragraph and Essay Writing"]
+    }
+  },
+  {
+    /* সংশোধন: ICT-র বই একটাই (৬টি অধ্যায়), ১ম/২য় পত্র নেই */
+    id:"ict", name:{bn:"তথ্য ও যোগাযোগ প্রযুক্তি (ICT)",en:"Information & Communication Technology"}, group:"compulsory", icon:"fa-laptop-code", single:true,
+    part1:{
+      bn:["১ম অধ্যায়: তথ্য ও যোগাযোগ প্রযুক্তি: বিশ্ব ও বাংলাদেশ প্রেক্ষিত","২য় অধ্যায়: কমিউনিকেশন সিস্টেমস ও কম্পিউটার নেটওয়ার্কিং","৩য় অধ্যায়: সংখ্যা পদ্ধতি ও ডিজিটাল ডিভাইস","৪র্থ অধ্যায়: ওয়েব ডিজাইন পরিচিতি ও HTML","৫ম অধ্যায়: প্রোগ্রামিং ভাষা","৬ষ্ঠ অধ্যায়: ডেটাবেজ ম্যানেজমেন্ট সিস্টেম"],
+      en:["Chapter 1: ICT: Global & Bangladesh Perspective","Chapter 2: Communication Systems & Computer Networking","Chapter 3: Number Systems & Digital Devices","Chapter 4: Web Design Principles & HTML","Chapter 5: Programming Language","Chapter 6: Database Management System"]
+    }
+  },
+  {
+    /* সংশোধন: ১ম পত্র ১০টি, ২য় পত্র ১১টি অধ্যায় */
+    id:"physics", name:{bn:"পদার্থবিজ্ঞান",en:"Physics"}, group:"science", icon:"fa-atom",
+    part1:{
+      bn:["১ম অধ্যায়: ভৌতজগৎ ও পরিমাপ","২য় অধ্যায়: ভেক্টর","৩য় অধ্যায়: গতিবিদ্যা","৪র্থ অধ্যায়: নিউটনীয় বলবিদ্যা","৫ম অধ্যায়: কাজ, শক্তি ও ক্ষমতা","৬ষ্ঠ অধ্যায়: মহাকর্ষ ও অভিকর্ষ","৭ম অধ্যায়: পদার্থের গাঠনিক ধর্ম","৮ম অধ্যায়: পর্যাবৃত্ত গতি","৯ম অধ্যায়: তরঙ্গ","১০ম অধ্যায়: আদর্শ গ্যাস ও গ্যাসের গতিতত্ত্ব"],
+      en:["Chapter 1: Physical World and Measurement","Chapter 2: Vectors","Chapter 3: Dynamics (Kinematics)","Chapter 4: Newtonian Mechanics","Chapter 5: Work, Energy and Power","Chapter 6: Gravitation and Gravity","Chapter 7: Structural Properties of Matter","Chapter 8: Periodic Motion","Chapter 9: Waves","Chapter 10: Ideal Gas and Kinetic Theory of Gases"]
+    },
+    part2:{
+      bn:["১ম অধ্যায়: তাপগতিবিদ্যা","২য় অধ্যায়: স্থির তড়িৎ","৩য় অধ্যায়: চল তড়িৎ","৪র্থ অধ্যায়: তড়িৎ প্রবাহের চৌম্বক ক্রিয়া ও চুম্বকত্ব","৫ম অধ্যায়: তাড়িতচৌম্বকীয় আবেশ ও পরিবর্তী প্রবাহ","৬ষ্ঠ অধ্যায়: জ্যামিতিক আলোকবিজ্ঞান","৭ম অধ্যায়: ভৌত আলোকবিজ্ঞান","৮ম অধ্যায়: আধুনিক পদার্থবিজ্ঞানের সূচনা","৯ম অধ্যায়: পরমাণুর মডেল ও নিউক্লিয়ার পদার্থবিজ্ঞান","১০ম অধ্যায়: সেমিকন্ডাক্টর ও ইলেকট্রনিক্স","১১শ অধ্যায়: জ্যোতির্বিজ্ঞান"],
+      en:["Chapter 1: Thermodynamics","Chapter 2: Static Electricity","Chapter 3: Current Electricity","Chapter 4: Magnetic Effect of Current and Magnetism","Chapter 5: Electromagnetic Induction and Alternating Current","Chapter 6: Geometrical Optics","Chapter 7: Physical Optics","Chapter 8: Introduction to Modern Physics","Chapter 9: Atomic Models and Nuclear Physics","Chapter 10: Semiconductor and Electronics","Chapter 11: Astronomy"]
+    }
+  },
+  {
+    id:"chemistry", name:{bn:"রসায়ন",en:"Chemistry"}, group:"science", icon:"fa-flask",
+    part1:{
+      bn:["১ম অধ্যায়: গবেষণাগারের নিরাপদ ব্যবহার","২য় অধ্যায়: গুণগত রসায়ন","৩য় অধ্যায়: মৌলের পর্যায়বৃত্ত ধর্ম ও রাসায়নিক বন্ধন","৪র্থ অধ্যায়: রাসায়নিক পরিবর্তন","৫ম অধ্যায়: কর্মমুখী রসায়ন"],
+      en:["Chapter 1: Safe Use of Laboratory","Chapter 2: Qualitative Chemistry","Chapter 3: Periodic Properties of Elements & Chemical Bonding","Chapter 4: Chemical Changes","Chapter 5: Vocational Chemistry"]
+    },
+    part2:{
+      bn:["১ম অধ্যায়: পরিবেশ রসায়ন","২য় অধ্যায়: জৈব রসায়ন","৩য় অধ্যায়: পরিমাণগত রসায়ন","৪র্থ অধ্যায়: তড়িৎ রসায়ন","৫ম অধ্যায়: অর্থনৈতিক রসায়ন"],
+      en:["Chapter 1: Environmental Chemistry","Chapter 2: Organic Chemistry","Chapter 3: Quantitative Chemistry","Chapter 4: Electrochemistry","Chapter 5: Economic Chemistry"]
+    }
+  },
+  {
+    /* সংশোধন: ফাংশন ও সংযুক্ত কোণ ১ম পত্রে, আর ২য় পত্রে ১০টি অধ্যায় (আগে শুধু স্থিতিবিদ্যা ও গতিবিদ্যা ছিল) */
+    id:"higher_math", name:{bn:"উচ্চতর গণিত",en:"Higher Mathematics"}, group:"science", icon:"fa-calculator",
+    part1:{
+      bn:["১ম অধ্যায়: ম্যাট্রিক্স ও নির্ণায়ক","২য় অধ্যায়: ভেক্টর","৩য় অধ্যায়: সরলরেখা","৪র্থ অধ্যায়: বৃত্ত","৫ম অধ্যায়: বিন্যাস ও সমাবেশ","৬ষ্ঠ অধ্যায়: ত্রিকোণমিতিক অনুপাত","৭ম অধ্যায়: সংযুক্ত কোণের ত্রিকোণমিতিক অনুপাত","৮ম অধ্যায়: ফাংশন ও ফাংশনের লেখচিত্র","৯ম অধ্যায়: অন্তরীকরণ","১০ম অধ্যায়: যোগজীকরণ"],
+      en:["Chapter 1: Matrices and Determinants","Chapter 2: Vectors","Chapter 3: Straight Lines","Chapter 4: Circles","Chapter 5: Permutation & Combination","Chapter 6: Trigonometric Ratios","Chapter 7: Trigonometric Ratios of Associated Angles","Chapter 8: Functions and Graphs of Functions","Chapter 9: Differentiation","Chapter 10: Integration"]
+    },
+    part2:{
+      bn:["১ম অধ্যায়: বাস্তব সংখ্যা ও অসমতা","২য় অধ্যায়: যোগাশ্রয়ী প্রোগ্রাম","৩য় অধ্যায়: জটিল সংখ্যা","৪র্থ অধ্যায়: বহুপদী ও বহুপদী সমীকরণ","৫ম অধ্যায়: দ্বিপদী বিস্তৃতি","৬ষ্ঠ অধ্যায়: কণিক","৭ম অধ্যায়: বিপরীত ত্রিকোণমিতিক ফাংশন ও ত্রিকোণমিতিক সমীকরণ","৮ম অধ্যায়: স্থিতিবিদ্যা","৯ম অধ্যায়: সমতলে বস্তুকণার গতি","১০ম অধ্যায়: বিস্তার পরিমাপ ও সম্ভাবনা"],
+      en:["Chapter 1: Real Numbers and Inequalities","Chapter 2: Linear Programming","Chapter 3: Complex Numbers","Chapter 4: Polynomials and Polynomial Equations","Chapter 5: Binomial Expansion","Chapter 6: Conic Sections","Chapter 7: Inverse Trigonometric Functions & Trigonometric Equations","Chapter 8: Statics","Chapter 9: Motion of a Particle in a Plane","Chapter 10: Measures of Dispersion and Probability"]
+    }
+  },
+  {
+    /* সংশোধন: ১ম পত্র = উদ্ভিদ (১২টি অধ্যায়), ২য় পত্র = প্রাণী (১২টি অধ্যায়) */
+    id:"biology", name:{bn:"জীববিজ্ঞান",en:"Biology"}, group:"science", icon:"fa-seedling",
+    part1:{
+      bn:["১ম অধ্যায়: কোষ ও এর গঠন","২য় অধ্যায়: কোষ বিভাজন","৩য় অধ্যায়: কোষ রসায়ন","৪র্থ অধ্যায়: অণুজীব","৫ম অধ্যায়: শৈবাল ও ছত্রাক","৬ষ্ঠ অধ্যায়: ব্রায়োফাইটা ও টেরিডোফাইটা","৭ম অধ্যায়: নগ্নবীজী ও আবৃতবীজী উদ্ভিদ","৮ম অধ্যায়: টিস্যু ও টিস্যুতন্ত্র","৯ম অধ্যায়: উদ্ভিদ শারীরতত্ত্ব","১০ম অধ্যায়: উদ্ভিদ প্রজনন","১১শ অধ্যায়: জীবপ্রযুক্তি","১২শ অধ্যায়: জীবের পরিবেশ, বিস্তার ও সংরক্ষণ"],
+      en:["Chapter 1: Cell and its Structure","Chapter 2: Cell Division","Chapter 3: Cell Chemistry","Chapter 4: Microorganisms","Chapter 5: Algae and Fungi","Chapter 6: Bryophyta and Pteridophyta","Chapter 7: Gymnosperms and Angiosperms","Chapter 8: Tissues and Tissue Systems","Chapter 9: Plant Physiology","Chapter 10: Plant Reproduction","Chapter 11: Biotechnology","Chapter 12: Environment, Distribution and Conservation of Organisms"]
+    },
+    part2:{
+      bn:["১ম অধ্যায়: প্রাণীর বিভিন্নতা ও শ্রেণিবিন্যাস","২য় অধ্যায়: প্রাণীর পরিচিতি","৩য় অধ্যায়: পরিপাক ও শোষণ","৪র্থ অধ্যায়: রক্ত ও সঞ্চালন","৫ম অধ্যায়: গ্যাসীয় বিনিময়","৬ষ্ঠ অধ্যায়: বর্জ্য ও নিষ্কাশন","৭ম অধ্যায়: চলন ও অঙ্গচালনা","৮ম অধ্যায়: সমন্বয় ও নিয়ন্ত্রণ","৯ম অধ্যায়: মানব জীবনের ধারাবাহিকতা","১০ম অধ্যায়: মানবদেহের প্রতিরক্ষা","১১শ অধ্যায়: জিনতত্ত্ব ও বিবর্তন","১২শ অধ্যায়: প্রাণীর আচরণ"],
+      en:["Chapter 1: Animal Diversity and Classification","Chapter 2: Animal Identity","Chapter 3: Digestion and Absorption","Chapter 4: Blood and Circulation","Chapter 5: Gas Exchange","Chapter 6: Waste and Excretion","Chapter 7: Locomotion and Movement","Chapter 8: Coordination and Control","Chapter 9: Continuity of Human Life","Chapter 10: Defense of the Human Body","Chapter 11: Genetics and Evolution","Chapter 12: Animal Behaviour"]
+    }
+  },
+  {
+    id:"agriculture", name:{bn:"কৃষি শিক্ষা",en:"Agriculture Studies"}, group:"science", icon:"fa-wheat-awn",
+    part1:{
+      bn:["১ম অধ্যায়: বাংলাদেশের কৃষি","২য় অধ্যায়: কৃষি প্রযুক্তি ও যন্ত্রপাতি","৩য় অধ্যায়: বিশেষ উৎপাদন প্রযুক্তি","৪র্থ অধ্যায়: কৃষি ও জলবায়ু"],
+      en:["Chapter 1: Agriculture in Bangladesh","Chapter 2: Agricultural Technology & Implements","Chapter 3: Special Production Technology","Chapter 4: Agriculture and Climate"]
+    },
+    part2:{
+      bn:["১ম অধ্যায়: মৎস্য চাষ","২য় অধ্যায়: পোল্ট্রি উৎপাদন","৩য় অধ্যায়: গবাদিপশু পালন","৪র্থ অধ্যায়: সামাজিক বনায়ন"],
+      en:["Chapter 1: Fish Farming / Aquaculture","Chapter 2: Poultry Production","Chapter 3: Livestock Rearing","Chapter 4: Social Forestry"]
+    }
+  },
+  {
+    id:"statistics", name:{bn:"পরিসংখ্যান",en:"Statistics"}, group:"science", icon:"fa-chart-simple",
+    part1:{
+      bn:["১ম অধ্যায়: পরিসংখ্যান, চলক ও সংকেত","২য় অধ্যায়: তথ্য সংগ্রহ ও উপস্থাপন","৩য় অধ্যায়: কেন্দ্রীয় প্রবণতার পরিমাপ","৪র্থ অধ্যায়: বিস্তার পরিমাপ"],
+      en:["Chapter 1: Introduction to Statistics & Variables","Chapter 2: Data Collection & Presentation","Chapter 3: Measures of Central Tendency","Chapter 4: Measures of Dispersion"]
+    },
+    part2:{
+      bn:["১ম অধ্যায়: সম্ভাবনা","২য় অধ্যায়: দৈব চলক ও গাণিতিক প্রত্যাশা","৩য় অধ্যায়: দ্বিপদী ও পয়েসন বণ্টন","৪র্থ অধ্যায়: পরিমিত বণ্টন"],
+      en:["Chapter 1: Probability Concepts","Chapter 2: Random Variable & Expectation","Chapter 3: Binomial and Poisson Distribution","Chapter 4: Normal Distribution"]
+    }
+  },
+  {
+    id:"accounting", name:{bn:"হিসাববিজ্ঞান",en:"Accounting"}, group:"commerce", icon:"fa-file-invoice-dollar",
+    part1:{
+      bn:["১ম অধ্যায়: হিসাববিজ্ঞান পরিচিতি","২য় অধ্যায়: হিসাবের বইসমূহ","৩য় অধ্যায়: ব্যাংক সমন্বয় বিবরণী","৪র্থ অধ্যায়: রেওয়ামিল","৫ম অধ্যায়: কার্যপত্র"],
+      en:["Chapter 1: Accounting Overview","Chapter 2: Books of Accounts","Chapter 3: Bank Reconciliation Statement","Chapter 4: Trial Balance","Chapter 5: Work Sheet & Adjustments"]
+    },
+    part2:{
+      bn:["১ম অধ্যায়: অবচয়","২য় অধ্যায়: অংশীদারি কারবারের হিসাব","৩য় অধ্যায়: যৌথ মূলধনী কোম্পানির মূলধন","৪র্থ অধ্যায়: আর্থিক বিবরণী বিশ্লেষণ"],
+      en:["Chapter 1: Depreciation","Chapter 2: Partnership Accounting","Chapter 3: Joint Stock Company Capital","Chapter 4: Financial Statement Analysis"]
+    }
+  },
+  {
+    id:"logic", name:{bn:"যুক্তিবিদ্যা",en:"Logic"}, group:"arts", icon:"fa-brain",
+    part1:{
+      bn:["১ম অধ্যায়: যুক্তিবিদ্যা পরিচিতি","২য় অধ্যায়: যুক্তিবিদ্যার অবধারণ ও পদ","৩য় অধ্যায়: যুক্তির উপাদান","৪র্থ অধ্যায়: অবরোহ অনুমান","৫ম অধ্যায়: সহানুমান"],
+      en:["Chapter 1: Introduction to Logic","Chapter 2: Terms and Propositions","Chapter 3: Elements of Argument","Chapter 4: Deductive Inference","Chapter 5: Syllogism Principles"]
+    },
+    part2:{
+      bn:["১ম অধ্যায়: আরোহ অনুমান ও এর প্রকারভেদ","২য় অধ্যায়: আরোহের বস্তুগত ভিত্তি","৩য় অধ্যায়: কার্যকারণ সম্বন্ধ","৪র্থ অধ্যায়: প্রকল্প","৫ম অধ্যায়: প্রাকল্পিক ও বৈকল্পিক যুক্তি"],
+      en:["Chapter 1: Inductive Logic & Types","Chapter 2: Material Basis of Induction","Chapter 3: Causation & Principles","Chapter 4: Hypothesis Testing","Chapter 5: Conditional Logic"]
+    }
+  },
+  {
+    id:"civics", name:{bn:"পৌরনীতি ও সুশাসন",en:"Civics & Good Governance"}, group:"arts", icon:"fa-landmark",
+    part1:{
+      bn:["১ম অধ্যায়: পৌরনীতি ও সুশাসন পরিচিতি","২য় অধ্যায়: সুশাসন","৩য় অধ্যায়: মূল্যবোধ, আইন, স্বাধীনতা ও সাম্য","৪র্থ অধ্যায়: ই-গভর্নেন্স ও সুশাসন"],
+      en:["Chapter 1: Introduction to Civics & Good Governance","Chapter 2: Good Governance Concepts","Chapter 3: Values, Law, Liberty and Equality","Chapter 4: E-Governance & Administration"]
+    },
+    part2:{
+      bn:["১ম অধ্যায়: ব্রিটিশ ভারতে প্রতিনিধিত্বশীল সরকারের বিকাশ","২য় অধ্যায়: পাকিস্তান থেকে বাংলাদেশ (১৯৪৭-১৯৭১)","৩য় অধ্যায়: বাংলাদেশের সংবিধান","৪র্থ অধ্যায়: সরকার কাঠামো"],
+      en:["Chapter 1: Growth of Representative Government","Chapter 2: From Pakistan to Bangladesh (1947-1971)","Chapter 3: Constitution of Bangladesh","Chapter 4: Organs of Government"]
+    }
+  },
+  {
+    id:"economics", name:{bn:"অর্থনীতি",en:"Economics"}, group:"arts", icon:"fa-chart-pie",
+    part1:{
+      bn:["১ম অধ্যায়: মৌলিক অর্থনৈতিক সমস্যা এবং এর সমাধান","২য় অধ্যায়: ভোক্তা ও উৎপাদকের আচরণ","৩য় অধ্যায়: উৎপাদন, উৎপাদন ব্যয় ও আয়","৪র্থ অধ্যায়: বাজার"],
+      en:["Chapter 1: Basic Economic Problems & Solutions","Chapter 2: Consumer and Producer Behavior","Chapter 3: Production and Costs","Chapter 4: Market Dynamics"]
+    },
+    part2:{
+      bn:["১ম অধ্যায়: বাংলাদেশের অর্থনীতি পরিচিতি","২য় অধ্যায়: বাংলাদেশের কৃষি","৩য় অধ্যায়: অর্থ ও ব্যাংক ব্যবস্থা","৪র্থ অধ্যায়: সরকারি অর্থব্যবস্থা"],
+      en:["Chapter 1: Overview of Bangladesh Economy","Chapter 2: Agriculture of Bangladesh","Chapter 3: Money and Banking System","Chapter 4: Public Finance"]
+    }
+  },
+  {
+    id:"sociology", name:{bn:"সমাজবিজ্ঞান",en:"Sociology"}, group:"arts", icon:"fa-users",
+    part1:{
+      bn:["১ম অধ্যায়: সমাজবিজ্ঞানের উৎপত্তি ও বিকাশ","২য় অধ্যায়: সমাজবিজ্ঞানের প্রাসঙ্গিকতা","৩য় অধ্যায়: সমাজবিজ্ঞানীদের মতবাদ","৪র্থ অধ্যায়: সমাজবিজ্ঞানের মূল প্রত্যয়"],
+      en:["Chapter 1: Origin and Development of Sociology","Chapter 2: Scope & Relevance of Sociology","Chapter 3: Theoretical Perspectives of Sociologists","Chapter 4: Basic Concepts of Sociology"]
+    },
+    part2:{
+      bn:["১ম অধ্যায়: বাংলাদেশের সংস্কৃতি ও সমাজ","২য় অধ্যায়: বাংলাদেশের সামাজিক পরিবর্তন","৩য় অধ্যায়: বিবাহ, পরিবার ও জ্ঞাতি সম্পর্ক","৪র্থ অধ্যায়: বাংলাদেশের সামাজিক সমস্যা"],
+      en:["Chapter 1: Culture and Society of Bangladesh","Chapter 2: Social Change in Bangladesh","Chapter 3: Marriage, Family and Kinship","Chapter 4: Social Problems in Bangladesh"]
+    }
+  },
+  {
+    id:"social_work", name:{bn:"সমাজকর্ম",en:"Social Work"}, group:"arts", icon:"fa-hand-holding-hand",
+    part1:{
+      bn:["১ম অধ্যায়: সমাজকর্মের ধারণা, লক্ষ্য ও উদ্দেশ্য","২য় অধ্যায়: সমাজকর্ম পেশার ইতিহাস","৩য় অধ্যায়: সমাজকর্মের সাথে সংশ্লিষ্ট মৌলিক ধারণা","৪র্থ অধ্যায়: সমাজকর্মের মূল্যবোধ ও নীতিবোধ"],
+      en:["Chapter 1: Concept, Goals and Objectives of Social Work","Chapter 2: History of Social Work Profession","Chapter 3: Related Concepts of Social Work","Chapter 4: Values and Ethics of Social Work"]
+    },
+    part2:{
+      bn:["১ম অধ্যায়: বাংলাদেশে সমাজকর্মের প্রয়োগ ক্ষেত্র","২য় অধ্যায়: মৌলিক মানবিক চাহিদা","৩য় অধ্যায়: বাংলাদেশের সমাজসেবা কার্যক্রম","৪র্থ অধ্যায়: সামাজিক আইন ও সামাজিক নীতি"],
+      en:["Chapter 1: Fields of Social Work Practice in Bangladesh","Chapter 2: Basic Human Needs","Chapter 3: Social Services Programs in Bangladesh","Chapter 4: Social Legislation and Policy"]
+    }
+  },
+  {
+    id:"geography", name:{bn:"ভূগোল",en:"Geography"}, group:"arts", icon:"fa-earth-americas",
+    part1:{
+      bn:["১ম অধ্যায়: প্রাকৃতিক ভূগোল পরিচিতি","২য় অধ্যায়: পৃথিবীর গঠন ও গাঠনিক রূপ","৩য় অধ্যায়: ভূমিরূপ পরিবর্তন","৪র্থ অধ্যায়: বায়ুমণ্ডল ও জলবায়ু"],
+      en:["Chapter 1: Introduction to Physical Geography","Chapter 2: Internal Structure & Form of the Earth","Chapter 3: Landform Changes","Chapter 4: Atmosphere and Climate Systems"]
+    },
+    part2:{
+      bn:["১ম অধ্যায়: মানব ভূগোল","২য় অধ্যায়: জনসংখ্যা","৩য় অধ্যায়: বসতি","৪র্থ অধ্যায়: অর্থনৈতিক কার্যাবলী"],
+      en:["Chapter 1: Introduction to Human Geography","Chapter 2: Population Geography & Dynamics","Chapter 3: Human Settlement Types","Chapter 4: Economic Activities"]
+    }
+  },
+  {
+    id:"islamic_studies", name:{bn:"ইসলাম শিক্ষা",en:"Islamic Studies"}, group:"arts", icon:"fa-kaaba",
+    part1:{
+      bn:["১ম অধ্যায়: ইসলামী শিক্ষা ও সংস্কৃতি","২য় অধ্যায়: শরীয়তের উৎস (কুরআন ও হাদিস)","৩য় অধ্যায়: পারিবারিক ও সামাজিক জীবন","৪র্থ অধ্যায়: ইসলামী অর্থনীতি ও সমাজ ব্যবস্থা"],
+      en:["Chapter 1: Islamic Education and Culture","Chapter 2: Sources of Shariah (Quran & Hadith)","Chapter 3: Family and Social Life in Islam","Chapter 4: Islamic Economic System"]
+    },
+    part2:{
+      bn:["১ম অধ্যায়: আল-কুরআন অধ্যয়ন","২য় অধ্যায়: আল-হাদিস অধ্যয়ন","৩য় অধ্যায়: ইসলামী ফিকহ ও আইনি ব্যবস্থা","৪র্থ অধ্যায়: মানবসেবা ও নৈতিক জীবন"],
+      en:["Chapter 1: Al-Quran Studies","Chapter 2: Al-Hadith Studies","Chapter 3: Islamic Jurisprudence (Fiqh)","Chapter 4: Moral Values & Human Service"]
+    }
+  },
+  {
+    id:"hindu_studies", name:{bn:"হিন্দুধর্ম ও নৈতিক শিক্ষা",en:"Hindu Studies & Moral Education"}, group:"arts", icon:"fa-om",
+    part1:{
+      bn:["১ম অধ্যায়: ঈশ্বর ও সৃষ্টি তত্ত্ব","২য় অধ্যায়: হিন্দুধর্মের উৎস ও ধর্মগ্রন্থ","৩য় অধ্যায়: শ্রীমদ্ভগবদ্গীতা ও তার মহত্ত্ব","৪র্থ অধ্যায়: অবতারবাদ ও দেব-দেবী"],
+      en:["Chapter 1: Concept of God & Creation","Chapter 2: Sources of Hinduism & Sacred Texts","Chapter 3: Srimad Bhagavad Gita & Significance","Chapter 4: Avataras and Deities"]
+    },
+    part2:{
+      bn:["১ম অধ্যায়: পারিবারিক ও সামাজিক সদাচার","২য় অধ্যায়: ধর্মীয় উৎসব ও পার্বণ","৩য় অধ্যায়: যোগ সাধনা ও মুক্তি","৪র্থ অধ্যায়: হিন্দু ধর্মীয় মূল্যবোধ ও নৈতিকতা"],
+      en:["Chapter 1: Family and Social Virtues","Chapter 2: Religious Festivals & Rituals","Chapter 3: Yoga Practice & Salvation","Chapter 4: Hindu Values & Ethics"]
+    }
+  },
+  {
+    id:"christian_studies", name:{bn:"খ্রিস্টধর্ম ও নৈতিক শিক্ষা",en:"Christian Studies & Moral Education"}, group:"arts", icon:"fa-cross",
+    part1:{
+      bn:["১ম অধ্যায়: ঈশ্বর তত্ত্ব ও সৃষ্টি","২য় অধ্যায়: পবিত্র বাইবেল পরিচিতি","৩য় অধ্যায়: যীশু খ্রীষ্টের জীবন ও শিক্ষা","৪র্থ অধ্যায়: খ্রীষ্টীয় মণ্ডলী ও সমাজ"],
+      en:["Chapter 1: Theology & Creation","Chapter 2: Introduction to Holy Bible","Chapter 3: Life and Teachings of Jesus Christ","Chapter 4: Christian Church & Community"]
+    },
+    part2:{
+      bn:["১ম অধ্যায়: খ্রীষ্টীয় সেবা ও বিশ্বস্ততা","২য় অধ্যায়: দশ আজ্ঞা ও আদেশসমূহ","৩য় অধ্যায়: নৈতিক মূল্যবোধ ও চরিত্র গঠন","৪র্থ অধ্যায়: আধুনিক বিশ্ব ও খ্রীষ্টীয় আদর্শ"],
+      en:["Chapter 1: Christian Service & Stewardship","Chapter 2: The Ten Commandments","Chapter 3: Moral Values & Character Building","Chapter 4: Modern World & Christian Ethics"]
+    }
+  },
+  {
+    id:"buddhist_studies", name:{bn:"বৌদ্ধধর্ম ও নৈতিক শিক্ষা",en:"Buddhist Studies & Moral Education"}, group:"arts", icon:"fa-dharmachakra",
+    part1:{
+      bn:["১ম অধ্যায়: গৌতম বুদ্ধের জীবন ও দর্শন","২য় অধ্যায়: চার আর্যসত্য ও আর্য অষ্টাঙ্গিক মার্গ","৩য় অধ্যায়: ত্রিপিটক পরিচিতি","৪র্থ অধ্যায়: সংঘ ও বৌদ্ধ ঐতিহ্য"],
+      en:["Chapter 1: Life and Philosophy of Gautama Buddha","Chapter 2: Four Noble Truths & Eightfold Path","Chapter 3: Introduction to Tipitaka","Chapter 4: Sangha & Buddhist Heritage"]
+    },
+    part2:{
+      bn:["১ম অধ্যায়: শীল, সমাধি ও প্রজ্ঞা","২য় অধ্যায়: অহিংসা ও পরিবেশ ভাবনা","৩য় অধ্যায়: বৌদ্ধ সংস্কৃতি ও উৎসব","৪র্থ অধ্যায়: নৈতিক জীবন গঠন"],
+      en:["Chapter 1: Sila, Samadhi and Panna","Chapter 2: Non-violence & Environmental Care","Chapter 3: Buddhist Culture & Festivals","Chapter 4: Moral Character Development"]
+    }
+  },
+  {
+    id:"home_science", name:{bn:"গার্হস্থ্য বিজ্ঞান",en:"Home Science"}, group:"arts", icon:"fa-house-user",
+    part1:{
+      bn:["১ম অধ্যায়: গৃহ ব্যবস্থাপনা ও সম্পদ ব্যবস্থাপনা","২য় অধ্যায়: পরিবার ও সময় ব্যবস্থাপনা","৩য় অধ্যায়: গৃহের অভ্যন্তরীণ সজ্জা","৪র্থ অধ্যায়: শিশু বিকাশ ও মানসিক স্বাস্থ্য"],
+      en:["Chapter 1: Home & Resource Management","Chapter 2: Family & Time Management","Chapter 3: Interior Design & Home Decor","Chapter 4: Child Development & Mental Health"]
+    },
+    part2:{
+      bn:["১ম অধ্যায়: খাদ্য, পুষ্টি ও পরিপাক","২য় অধ্যায়: খাদ্য পরিকল্পনা ও পরিবেশন","৩য় অধ্যায়: বস্ত্র শিল্প ও তন্তু পরিচিতি","৪র্থ অধ্যায়: পোশাকের যত্ন ও রক্ষণাবেক্ষণ"],
+      en:["Chapter 1: Food, Nutrition and Digestion","Chapter 2: Meal Planning & Service","Chapter 3: Textile Science & Fiber Study","Chapter 4: Clothing Care & Maintenance"]
+    }
+  },
+  {
+    id:"history", name:{bn:"ইতিহাস",en:"History"}, group:"arts", icon:"fa-monument",
+    part1:{
+      bn:["১ম অধ্যায়: উপমহাদেশে ইউরোপীয়দের আগমন","২য় অধ্যায়: ইংরেজ শাসন ও ঔপনিবেশিক প্রভাব","৩য় অধ্যায়: ভারতীয় জাতীয়তাবাদী আন্দোলন","৪র্থ অধ্যায়: ১৯৪৭ সালের দেশভাগ ও ফলাফল"],
+      en:["Chapter 1: Arrival of Europeans in Subcontinent","Chapter 2: British Rule & Colonial Impact","Chapter 3: Indian Nationalist Movement","Chapter 4: Partition of 1947 & Aftermath"]
+    },
+    part2:{
+      bn:["১ম অধ্যায়: ফরাসি বিপ্লব ও শিল্প বিপ্লব","২য় অধ্যায়: প্রথম বিশ্বযুদ্ধ ও লীগ অব নেশনস","৩য় অধ্যায়: দ্বিতীয় বিশ্বযুদ্ধ ও জাতিসংঘ","৪র্থ অধ্যায়: স্নায়ুযুদ্ধ ও আধুনিক বিশ্ব"],
+      en:["Chapter 1: French Revolution & Industrial Revolution","Chapter 2: World War I & League of Nations","Chapter 3: World War II & United Nations","Chapter 4: Cold War & Modern World"]
+    }
+  }
+];
+
+let currentLang = 'bn';
+let currentFilterGroup = 'all';
+let selectedSearchPart = null;
+let homeworkTasks = [];
+
+window.onload = function() {
+  initAppSettings();
+  renderBookList();
+  loadHomeworksFromStorage();
+};
+
+function initAppSettings() {
+  const savedLang = localStorage.getItem('hsc_app_lang') || 'bn';
+  const savedTheme = localStorage.getItem('hsc_app_theme') || 'light';
+  setAppLanguage(savedLang, false);
+  setAppTheme(savedTheme);
+}
+
+function setAppLanguage(lang, reRender = true) {
+  currentLang = lang;
+  localStorage.setItem('hsc_app_lang', lang);
+  document.documentElement.lang = lang;
+  const dict = i18n[lang];
+
+  document.getElementById('txtAppTitle').innerText = dict.appTitle;
+  document.getElementById('txtAppSubtitle').innerText = dict.appSubtitle;
+  document.getElementById('txtSession').innerText = dict.session;
+  document.getElementById('txtSearchPlaceholder').innerHTML = `<i class="fa-solid fa-magnifying-glass"></i> ${dict.searchPlaceholder}`;
+
+  document.getElementById('filterAll').innerText = dict.allSubjects;
+  document.getElementById('filterCompulsory').innerText = dict.compulsory;
+  document.getElementById('filterScience').innerText = dict.science;
+  document.getElementById('filterCommerce').innerText = dict.commerce;
+  document.getElementById('filterArts').innerText = dict.arts;
+
+  document.getElementById('txtNavHome').innerText = dict.navHome;
+  document.getElementById('txtNavSettings').innerText = dict.navSettings;
+  document.getElementById('txtNavHomework').innerText = dict.navHomework;
+
+  document.getElementById('txtSettingsHeader').innerText = dict.settingsHeader;
+  document.getElementById('txtSettingsSub').innerText = dict.settingsSub;
+  document.getElementById('txtThemeTitle').innerText = dict.themeTitle;
+  document.getElementById('txtThemeLight').innerText = dict.themeLight;
+  document.getElementById('txtThemeDark').innerText = dict.themeDark;
+  document.getElementById('txtLangTitle').innerText = dict.langTitle;
+
+  document.getElementById('txtHwHeader').innerText = dict.hwHeader;
+  document.getElementById('txtHwSub').innerText = dict.hwSub;
+  document.getElementById('txtHwAddTitle').innerHTML = `<i class="fa-solid fa-plus-circle" style="color: var(--accent-color);"></i> ${dict.hwAddTitle}`;
+  document.getElementById('hwSubjectInput').placeholder = dict.hwSubjectPh;
+  document.getElementById('hwTaskInput').placeholder = dict.hwTaskPh;
+  document.getElementById('btnSaveHw').innerHTML = `<i class="fa-solid fa-bookmark"></i> ${dict.btnSave}`;
+
+  document.getElementById('txtModalSearchTitle').innerText = dict.modalSearchTitle;
+  document.getElementById('lblSearchBook').innerText = dict.lblSearchBook;
+  document.getElementById('lblSearchPart').innerText = dict.lblSearchPart;
+  document.getElementById('lblSearchChapter').innerText = dict.lblSearchChapter;
+  document.getElementById('txtPart1Label').innerText = dict.part1;
+  document.getElementById('txtPart2Label').innerText = dict.part2;
+  document.getElementById('btnExecuteSearch').innerHTML = `<i class="fa-solid fa-magnifying-glass"></i> ${dict.btnSearch}`;
+
+  const bnCard = document.getElementById('langBnCard');
+  const enCard = document.getElementById('langEnCard');
+  if (lang === 'bn') { bnCard.classList.add('active'); enCard.classList.remove('active'); }
+  else { enCard.classList.add('active'); bnCard.classList.remove('active'); }
+
+  if (reRender) { renderBookList(); renderHomeworkList(); }
+}
+
+function setAppTheme(mode) {
+  document.documentElement.setAttribute('data-theme', mode);
+  localStorage.setItem('hsc_app_theme', mode);
+  const lightCard = document.getElementById('themeLightCard');
+  const darkCard = document.getElementById('themeDarkCard');
+  if (mode === 'dark') { darkCard.classList.add('active'); lightCard.classList.remove('active'); }
+  else { lightCard.classList.add('active'); darkCard.classList.remove('active'); }
+}
+
+function renderBookList() {
+  const container = document.getElementById('booksGrid');
+  container.innerHTML = '';
+  const filteredBooks = booksDataset.filter(book => currentFilterGroup === 'all' || book.group === currentFilterGroup);
+  const dict = i18n[currentLang];
+
+  filteredBooks.forEach(book => {
+    const card = document.createElement('div');
+    card.className = 'book-card';
+    card.setAttribute('onclick', 'toggleBookCard(this, event)');
+
+    // পত্র ভাগ না থাকলে (যেমন ICT) একটিই বোতাম
+    const partsHtml = book.single
+      ? `<button class="part-btn" onclick="openChapterList('${book.id}', 1, null, event)">
+           <i class="fa-solid fa-book-open"></i> ${dict.allChapters}
+         </button>`
+      : `<button class="part-btn" onclick="openChapterList('${book.id}', 1, null, event)">
+           <i class="fa-solid fa-book-open"></i> ${dict.part1}
+         </button>
+         <button class="part-btn" onclick="openChapterList('${book.id}', 2, null, event)">
+           <i class="fa-solid fa-book-open"></i> ${dict.part2}
+         </button>`;
+
+    card.innerHTML = `
+      <div class="book-header">
+        <div class="book-info-group">
+          <div class="book-icon"><i class="fa-solid ${book.icon}"></i></div>
+          <div class="book-title-area"><h3>${book.name[currentLang]}</h3></div>
+        </div>
+        <i class="fa-solid fa-chevron-right expand-icon"></i>
+      </div>
+      <div class="parts-container">${partsHtml}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function toggleBookCard(cardElement, event) {
+  if (event.target.closest('.part-btn')) return;
+  cardElement.classList.toggle('open');
+}
+
+function filterGroup(groupName, buttonElement) {
+  currentFilterGroup = groupName;
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  buttonElement.classList.add('active');
+  renderBookList();
+}
+
+function openChapterList(bookId, partNumber, targetChapterQuery = null, event = null) {
+  if (event) event.stopPropagation();
+
+  const book = booksDataset.find(b => b.id === bookId);
+  if (!book) return;
+
+  // একপত্রের বইয়ে সবসময় part1 ব্যবহার হবে
+  if (book.single) partNumber = 1;
+
+  const dict = i18n[currentLang];
+
+  document.getElementById('homeView').classList.add('hidden');
+  document.getElementById('settingsView').classList.add('hidden');
+  document.getElementById('homeworkView').classList.add('hidden');
+  document.getElementById('chapterView').classList.remove('hidden');
+
+  const partTitleText = book.single ? dict.allChapters : (partNumber === 1 ? dict.part1 : dict.part2);
+  document.getElementById('chapterViewTitle').innerText = `${book.name[currentLang]} (${partTitleText})`;
+  document.getElementById('chapterViewSubtitle').innerText = `${dict.appSubtitle} - ${partTitleText}`;
+
+  const chapters = partNumber === 1 ? book.part1[currentLang] : book.part2[currentLang];
+  const container = document.getElementById('chapterListContainer');
+  container.innerHTML = '';
+
+  let matchedIdx = -1;
+  if (targetChapterQuery) {
+    const normalizedQuery = normalizeNumerals(targetChapterQuery.toString().trim().toLowerCase());
+    const isNumeric = /^\d+$/.test(normalizedQuery);
+    if (isNumeric) {
+      matchedIdx = parseInt(normalizedQuery) - 1;
+    } else {
+      matchedIdx = chapters.findIndex(ch => ch.toLowerCase().includes(normalizedQuery));
+    }
+  }
+
+  chapters.forEach((chapterText, idx) => {
+    const item = document.createElement('div');
+    item.className = 'chapter-item';
+    if (matchedIdx === idx) {
+      item.style.borderColor = 'var(--accent-color)';
+      item.style.backgroundColor = 'var(--accent-light)';
+    }
+    item.innerHTML = `
+      <div style="display: flex; align-items: center;">
+        <span class="chapter-num">${dict.chPrefix} ${idx + 1}</span>
+        <span style="font-size: 0.9rem; font-weight: 600;">${chapterText}</span>
+      </div>
+      <i class="fa-solid fa-angle-right" style="color: var(--text-secondary);"></i>
+    `;
+    container.appendChild(item);
+  });
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showHomeView() {
+  document.getElementById('chapterView').classList.add('hidden');
+  document.getElementById('homeView').classList.remove('hidden');
+}
+
+function openSearchModal() {
+  selectedSearchPart = null;
+  updateSearchPartButtons();
+  document.getElementById('searchError').style.display = 'none';
+  document.getElementById('searchModal').classList.add('active');
+}
+
+function closeSearchModal() {
+  document.getElementById('searchModal').classList.remove('active');
+}
+
+function toggleSearchPart(partNum) {
+  selectedSearchPart = (selectedSearchPart === partNum) ? null : partNum;
+  updateSearchPartButtons();
+}
+
+function updateSearchPartButtons() {
+  const btn1 = document.getElementById('searchPart1Btn');
+  const btn2 = document.getElementById('searchPart2Btn');
+  btn1.classList.remove('selected');
+  btn2.classList.remove('selected');
+  if (selectedSearchPart === 1) btn1.classList.add('selected');
+  if (selectedSearchPart === 2) btn2.classList.add('selected');
+}
+
+// Convert Bengali digits to English digits for flexible search
+function normalizeNumerals(str) {
+  const bnNum = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+  return str.replace(/[০-৯]/g, d => bnNum.indexOf(d));
+}
+
+function executeAdvancedSearch() {
+  const bookInput = document.getElementById('searchBookInput').value.trim().toLowerCase();
+  const chapterInput = document.getElementById('searchChapterInput').value.trim();
+  const errorBox = document.getElementById('searchError');
+  const dict = i18n[currentLang];
+
+  errorBox.style.display = 'none';
+
+  if (!bookInput && chapterInput) {
+    errorBox.innerText = dict.errNoBookWithChapter;
+    errorBox.style.display = 'block';
+    return;
+  }
+  if (!bookInput) {
+    errorBox.innerText = dict.errNoBook;
+    errorBox.style.display = 'block';
+    return;
+  }
+
+  const matchedBook = booksDataset.find(b =>
+    b.name.bn.toLowerCase().includes(bookInput) ||
+    b.name.en.toLowerCase().includes(bookInput) ||
+    b.id.includes(bookInput)
+  );
+
+  if (!matchedBook) {
+    errorBox.innerText = dict.errNotFound;
+    errorBox.style.display = 'block';
+    return;
+  }
+
+  closeSearchModal();
+
+  const targetPart = selectedSearchPart ? selectedSearchPart : 1;
+  openChapterList(matchedBook.id, targetPart, chapterInput || null);
+}
+
+function loadHomeworksFromStorage() {
+  const data = localStorage.getItem('hsc_app_homeworks');
+  if (data) {
+    homeworkTasks = JSON.parse(data);
+  } else {
+    const now = new Date();
+    homeworkTasks = [
+      { id: Date.now(), subject: "Physics", text: "Vector chapter math practice 1-10.", completed: false, date: formatDate(now) },
+      { id: Date.now() + 1, subject: "Bangla", text: "Read 'Sonar Tori' poem and prepare summary.", completed: true, date: formatDate(now) }
+    ];
+    saveHomeworksToStorage();
+  }
+  renderHomeworkList();
+}
+
+function saveHomeworksToStorage() {
+  localStorage.setItem('hsc_app_homeworks', JSON.stringify(homeworkTasks));
+}
+
+function formatDate(d) {
+  const dateObj = new Date(d);
+  return dateObj.toLocaleString(currentLang === 'bn' ? 'bn-BD' : 'en-US', {
+    day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true
+  });
+}
+
+function addHomeworkTask() {
+  const subjectInput = document.getElementById('hwSubjectInput');
+  const taskInput = document.getElementById('hwTaskInput');
+  if (!taskInput.value.trim()) return;
+
+  const newTask = {
+    id: Date.now(),
+    subject: subjectInput.value.trim() || (currentLang === 'bn' ? "সাধারণ" : "General"),
+    text: taskInput.value.trim(),
+    completed: false,
+    date: formatDate(new Date())
+  };
+
+  homeworkTasks.unshift(newTask);
+  saveHomeworksToStorage();
+  renderHomeworkList();
+  subjectInput.value = '';
+  taskInput.value = '';
+}
+
+function toggleHomeworkStatus(id) {
+  const task = homeworkTasks.find(t => t.id === id);
+  if (task) {
+    task.completed = !task.completed;
+    saveHomeworksToStorage();
+    renderHomeworkList();
+  }
+}
+
+function deleteHomeworkTask(id) {
+  homeworkTasks = homeworkTasks.filter(task => task.id !== id);
+  saveHomeworksToStorage();
+  renderHomeworkList();
+}
+
+function renderHomeworkList() {
+  const container = document.getElementById('homeworkListContainer');
+  container.innerHTML = '';
+
+  if (homeworkTasks.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 30px; color: var(--text-secondary);">
+        <i class="fa-solid fa-clipboard-check" style="font-size: 2rem; margin-bottom: 8px;"></i>
+        <p>${i18n[currentLang].noHwYet}</p>
+      </div>
+    `;
+    return;
+  }
+
+  homeworkTasks.forEach(task => {
+    const item = document.createElement('div');
+    item.className = `hw-item ${task.completed ? 'completed' : ''}`;
+    item.innerHTML = `
+      <div class="hw-left-group">
+        <input type="checkbox" class="hw-checkbox" ${task.completed ? 'checked' : ''} onchange="toggleHomeworkStatus(${task.id})">
+        <div class="hw-content">
+          <span class="hw-subject">${escapeHtml(task.subject)}</span>
+          <span class="hw-text">${escapeHtml(task.text)}</span>
+          <span class="hw-date"><i class="fa-regular fa-clock"></i> ${task.date || ''}</span>
+        </div>
+      </div>
+      <button class="btn-delete" onclick="deleteHomeworkTask(${task.id})"><i class="fa-solid fa-trash-can"></i></button>
+    `;
+    container.appendChild(item);
+  });
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.innerText = text;
+  return div.innerHTML;
+}
+
+function switchTab(tabName) {
+  const homeView = document.getElementById('homeView');
+  const chapterView = document.getElementById('chapterView');
+  const settingsView = document.getElementById('settingsView');
+  const homeworkView = document.getElementById('homeworkView');
+
+  document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+  homeView.classList.add('hidden');
+  chapterView.classList.add('hidden');
+  settingsView.classList.add('hidden');
+  homeworkView.classList.add('hidden');
+
+  if (tabName === 'home') {
+    homeView.classList.remove('hidden');
+    document.getElementById('navBtnHome').classList.add('active');
+  } else if (tabName === 'settings') {
+    settingsView.classList.remove('hidden');
+    document.getElementById('navBtnSettings').classList.add('active');
+  } else if (tabName === 'homework') {
+    homeworkView.classList.remove('hidden');
+    document.getElementById('navBtnHomework').classList.add('active');
+  }
+}
+</script>
 </body>
-  </html>
+    </html>

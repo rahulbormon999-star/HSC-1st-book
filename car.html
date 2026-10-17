@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Car Controller</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg1:#060607;--bg2:#1a0b0d;--k1:#2a2a31;--k2:#121216;--line:#3b3b44;--ink:#f5f5f7;--mute:#9a9aa5;--acc:#ff1a1a;--acc2:#c40000;--accink:#ffffff;--red:#ff1a1a;--red2:#b80000;--rim:#ececf0;--glow:rgba(255,26,26,.55);--shadow:rgba(0,0,0,.7);color-scheme:dark;box-sizing:border-box}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+html,body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none}
+body{font-family:"Rajdhani",system-ui,sans-serif;color:var(--ink);user-select:none;-webkit-user-select:none;touch-action:none;
+background:radial-gradient(80% 70% at 50% 115%,rgba(225,6,0,.38),transparent 65%),radial-gradient(120% 100% at 50% 0%,#17171c,#050506)}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:none;border:0;padding:0}
+button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+#app{position:fixed;inset:0}
+.zone{position:absolute}
+.tl{top:max(12px,env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px))}
+.tr{top:max(12px,env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px));display:flex;gap:8px}
+.bl{bottom:max(12px,env(safe-area-inset-bottom,0px));left:max(16px,env(safe-area-inset-left,0px));display:flex;align-items:flex-end;gap:14px}
+.br{bottom:max(12px,env(safe-area-inset-bottom,0px));right:max(16px,env(safe-area-inset-right,0px))}
+
+.key,.pedal{background:linear-gradient(180deg,var(--k1),var(--k2));border:1px solid var(--line);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 6px 14px var(--shadow);transition:transform .08s,box-shadow .12s,background .12s}
+.key{width:clamp(46px,8vw,64px);height:clamp(48px,15vh,60px);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.key small{font-size:10px;letter-spacing:.14em;color:var(--mute);font-weight:600}
+.key b{font-size:clamp(20px,5.4vh,26px);font-weight:700}
+.key svg{width:20px;height:20px}
+.key.on,.pedal.on{background:linear-gradient(180deg,var(--acc),var(--acc2));color:var(--accink);border-color:transparent;box-shadow:0 0 20px var(--glow),0 6px 14px var(--shadow)}
+.key.on small{color:var(--accink)}
+.key.stop{background:var(--ink);color:var(--bg1);border-color:var(--red);box-shadow:inset 0 -3px 0 var(--red),0 6px 14px var(--shadow);font-size:15px;font-weight:700;letter-spacing:.1em}
+.key.stop:active{box-shadow:0 0 18px var(--red)}
+.key:active,.pedal:active{transform:scale(.96)}
+
+.sw{display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,var(--k1),var(--k2));border:1px solid var(--line);border-radius:12px;padding:8px 12px 8px 12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 6px 14px var(--shadow);touch-action:none}
+.sw .ico{width:22px;height:22px;color:var(--mute);transition:color .15s,filter .15s}
+.sw .lbl{display:flex;flex-direction:column;line-height:1;text-align:left}
+.sw .lbl small{font-size:10px;letter-spacing:.14em;color:var(--mute);font-weight:600}
+.sw .lbl b{font-size:17px;font-weight:700}
+.track{width:52px;height:28px;border-radius:14px;background:var(--bg1);border:1px solid var(--line);position:relative;box-shadow:inset 0 2px 5px var(--shadow);transition:background .18s}
+.track::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:linear-gradient(180deg,#fff,#d4d4d8);box-shadow:0 2px 5px var(--shadow);transition:transform .18s cubic-bezier(.3,.9,.4,1)}
+.sw[aria-checked=true] .track{background:linear-gradient(90deg,var(--acc2),var(--acc))}
+.sw[aria-checked=true] .track::after{transform:translateX(24px)}
+.sw[aria-checked=true] .ico{color:var(--acc);filter:drop-shadow(0 0 6px var(--glow))}
+
+.gauge{position:absolute;left:50%;bottom:max(10px,env(safe-area-inset-bottom,0px));width:clamp(130px,36vh,180px);transform:translateX(-50%);text-align:center;pointer-events:none}
+.gauge svg{width:100%;display:block;overflow:visible}
+.g-bg{fill:none;stroke:var(--line);stroke-width:12;stroke-linecap:round;opacity:.6}
+.g-tick{fill:none;stroke:var(--mute);stroke-width:5;opacity:.55}
+.g-fill{fill:none;stroke:var(--acc);stroke-width:12;stroke-linecap:round;filter:drop-shadow(0 0 7px var(--glow));transition:stroke-dashoffset .06s linear}
+.g-num{font-size:54px;font-weight:700;fill:var(--ink);text-anchor:middle;font-variant-numeric:tabular-nums}
+.g-unit{font-size:12px;letter-spacing:.3em;fill:var(--mute);text-anchor:middle;font-weight:600}
+.gauge .info{margin-top:-6px;font-size:15px;font-weight:700;letter-spacing:.18em;color:var(--acc)}
+
+.pedal{position:relative;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;padding-bottom:12px;font-weight:700;letter-spacing:.2em;font-size:17px}
+.pedal::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(128,140,165,.22) 0 3px,transparent 3px 15px);pointer-events:none}
+.pedal span{position:relative}
+.gas{width:clamp(62px,10vw,80px);height:clamp(112px,34vh,160px);border-radius:12px}
+.brk{width:clamp(62px,10vw,80px);height:clamp(84px,27vh,124px);border-radius:12px;font-size:12px;letter-spacing:.1em}
+.brk.on{background:linear-gradient(180deg,var(--red),var(--red2));color:#fff;box-shadow:0 0 20px var(--red),0 6px 14px var(--shadow)}
+
+.wrap{--s:clamp(190px,74vh,330px);width:var(--s);height:var(--s);position:relative}.dial{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.d-line{fill:none;stroke:var(--line);stroke-width:1.5}.d-tick{fill:none;stroke:var(--mute);stroke-width:6;opacity:.55}.d-major{fill:none;stroke:var(--acc);stroke-width:10;filter:drop-shadow(0 0 4px var(--glow))}#wheel{position:absolute;inset:9%;touch-action:none;cursor:grab;filter:drop-shadow(0 10px 16px var(--shadow))}.w-gloss{fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;opacity:.28}.w-vent{fill:var(--bg1);opacity:.55}
+#wheel.ret{transition:transform .28s cubic-bezier(.2,.9,.3,1)}
+#wheel svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.w-rim{fill:none;stroke:var(--rim);stroke-width:20}.w-shade{fill:none;stroke-width:20}.w-stitch{fill:none;stroke:var(--acc);stroke-width:1.6;stroke-dasharray:4 4;opacity:.85}.w-pad{fill:none;stroke:var(--acc);stroke-width:22;stroke-linecap:round;opacity:.9;filter:drop-shadow(0 0 5px var(--glow))}.w-edge{fill:none;stroke:#fff;stroke-width:1;opacity:.18}.w-slit{stroke:var(--bg1);stroke-width:2;stroke-linecap:round;opacity:.45}.w-ring{fill:none;stroke:var(--acc);stroke-width:2;filter:drop-shadow(0 0 4px var(--glow))}
+.w-grip{fill:none;stroke:var(--bg1);stroke-width:20;stroke-dasharray:1.4 5;opacity:.3}
+.w-spoke{fill:var(--rim);stroke:var(--rim);stroke-width:6;stroke-linejoin:round}
+.w-hub{fill:url(#wHub);stroke:var(--rim);stroke-width:4}
+.w-mark{fill:var(--acc);filter:drop-shadow(0 0 4px var(--glow))}
+#horn{position:absolute;left:50%;top:50%;width:40%;height:40%;transform:translate(-50%,-50%);border-radius:50%;display:flex;align-items:center;justify-content:center;
+background:radial-gradient(circle at 35% 30%,#ffffff,#d4d4da);border:2px solid var(--red);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 3px 8px var(--shadow);transition:transform .08s,box-shadow .12s}
+#horn svg{position:static;width:52%;height:52%;color:#0a0a0c}
+#horn.on{background:radial-gradient(circle at 35% 30%,var(--acc),var(--acc2));box-shadow:0 0 22px var(--glow)}
+#horn.on svg{color:var(--accink)}
+
+.conn{position:absolute;top:max(14px,env(safe-area-inset-top,0px));left:calc(max(16px,env(safe-area-inset-left,0px)) + 184px);display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--mute);letter-spacing:.06em}
+.conn input{width:92px;padding:5px 8px;border-radius:8px;border:1px solid var(--line);background:var(--k2);color:var(--ink);font:inherit;font-size:13px;touch-action:auto;user-select:text;-webkit-user-select:text}
+.conn button{padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:linear-gradient(180deg,var(--k1),var(--k2));font-size:12px;font-weight:700;touch-action:manipulation}
+#st{display:none}.dot{width:8px;height:8px;border-radius:50%;background:transparent;border:1.5px solid var(--mute)}
+.dot.ok{background:var(--acc);border-color:var(--acc);box-shadow:0 0 8px var(--glow)}
+
+.rot{display:none;position:fixed;inset:0;background:var(--bg1);align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center;padding:24px;font-size:22px;font-weight:700;z-index:9}
+.rot svg{width:56px;height:56px;color:var(--acc);animation:tilt 1.8s ease-in-out infinite}
+@keyframes tilt{0%,30%{transform:rotate(0)}70%,100%{transform:rotate(-90deg)}}
+@media (orientation:portrait){.rot{display:flex}}
+@media (prefers-reduced-motion:reduce){#wheel.ret,.track::after,.g-fill{transition:none}.rot svg{animation:none}}
+.key:not(.on):not(.stop){box-shadow:inset 0 -2px 0 rgba(225,6,0,.6),0 6px 14px var(--shadow)}
+.sw{border-bottom:2px solid var(--red)}
+.gas{background:linear-gradient(180deg,var(--red),var(--red2));color:#fff;border-color:transparent;box-shadow:0 0 18px var(--glow),0 6px 14px var(--shadow)}
+.gas::before{background:repeating-linear-gradient(0deg,rgba(0,0,0,.3) 0 3px,transparent 3px 15px)}
+.gas.on{box-shadow:0 0 30px var(--glow),0 6px 14px var(--shadow);filter:brightness(1.18)}
+.brk{background:linear-gradient(180deg,#ffffff,#d6d6dc);color:#0a0a0c;border-color:transparent}
+.brk::before{background:repeating-linear-gradient(0deg,rgba(0,0,0,.14) 0 3px,transparent 3px 15px)}
+#back{border-color:var(--red);box-shadow:inset 0 -2px 0 var(--red),0 6px 14px var(--shadow)}
+#back svg{color:var(--red)}
+#back.on svg{color:#fff}
+</style>
+</head>
+<body>
+<div class="rot">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18.5h2"/></svg>
+  Rotate your phone to landscape
+</div>
+
+<div id="app">
+  <div class="zone tl">
+    <button class="sw" id="light" role="switch" aria-checked="false" aria-label="Light">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>
+      <span class="lbl"><small>LIGHT</small><b id="lstate">OFF</b></span>
+      <span class="track"></span>
+    </button>
+  </div>
+
+  <div class="zone tr">
+    <button class="key" data-g="1"><small>GEAR</small><b>1</b></button>
+    <button class="key" data-g="2"><small>GEAR</small><b>2</b></button>
+    <button class="key" data-g="3"><small>GEAR</small><b>3</b></button>
+    <button class="key stop" id="stop">STOP</button>
+    <button class="key" id="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><small>BACK</small></button>
+  </div>
+
+  <div class="gauge">
+    <svg viewBox="0 0 200 160" aria-hidden="true">
+      <path class="g-tick" d="M20.33 146 A92 92 0 1 1 179.67 146" stroke-dasharray="1.6 14.1"/>
+      <path class="g-bg" d="M30.72 140 A80 80 0 1 1 169.28 140"/>
+      <path class="g-fill" id="gfill" d="M30.72 140 A80 80 0 1 1 169.28 140" stroke-dasharray="335.1" stroke-dashoffset="335.1"/>
+      <text class="g-num" id="spd" x="100" y="106">0</text>
+      <text class="g-unit" x="100" y="128">SPEED</text>
+    </svg>
+    <div class="info" id="info">GEAR 1 · DRIVE</div>
+  </div>
+
+  <div class="zone bl">
+    <button class="pedal gas" id="gas"><span>GAS</span></button>
+    <button class="pedal brk" id="brk"><span>BRAKE</span></button>
+  </div>
+
+  <div class="conn"><span class="dot" id="dot"></span><span id="st">DEMO</span>
+    <input id="ip" placeholder="Car IP" inputmode="url" autocomplete="off" aria-label="Car IP address">
+    <button id="save">SET</button></div>
+
+  <div class="zone br">
+    <div class="wrap">
+      <svg class="dial" viewBox="0 0 200 200" aria-hidden="true">
+        <circle class="d-line" cx="100" cy="100" r="98"/>
+        <circle class="d-tick" cx="100" cy="100" r="91" stroke-dasharray="1.2 14.68"/>
+        <circle class="d-major" cx="100" cy="100" r="91" stroke-dasharray="1.8 141.14" stroke-dashoffset="0.9"/>
+      </svg>
+      <div id="wheel" role="slider" aria-label="Steering" aria-valuemin="-100" aria-valuemax="100" aria-valuenow="0">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <defs><linearGradient id="wShade" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:#fff;stop-opacity:.4"/><stop offset=".5" style="stop-color:#fff;stop-opacity:0"/><stop offset="1" style="stop-color:#000;stop-opacity:.4"/></linearGradient><radialGradient id="wHub" cx=".35" cy=".3" r=".9"><stop offset="0" style="stop-color:var(--k1)"/><stop offset="1" style="stop-color:var(--k2)"/></radialGradient></defs>
+          <circle class="w-rim" cx="100" cy="100" r="88"/>
+          <circle class="w-shade" cx="100" cy="100" r="88" stroke="url(#wShade)"/>
+          <circle class="w-grip" cx="100" cy="100" r="88"/>
+          <circle class="w-stitch" cx="100" cy="100" r="88"/>
+          <path class="w-pad" d="M20.25 137.19A88 88 0 0 1 20.25 62.81"/>
+          <path class="w-pad" d="M179.76 62.81A88 88 0 0 1 179.76 137.19"/>
+          <path class="w-gloss" d="M27.92 49.53A88 88 0 0 1 77.22 15"/>
+          <circle class="w-edge" cx="100" cy="100" r="78"/>
+          <path class="w-spoke" d="M16 92L74 84L74 116L16 108Z"/>
+          <path class="w-spoke" d="M184 92L126 84L126 116L184 108Z"/>
+          <path class="w-spoke" d="M87 126L113 126L108 184L92 184Z"/>
+          <circle class="w-vent" cx="34" cy="100" r="2.6"/><circle class="w-vent" cx="46" cy="100" r="2.6"/><circle class="w-vent" cx="58" cy="100" r="2.6"/>
+          <circle class="w-vent" cx="166" cy="100" r="2.6"/><circle class="w-vent" cx="154" cy="100" r="2.6"/><circle class="w-vent" cx="142" cy="100" r="2.6"/>
+          <circle class="w-vent" cx="100" cy="150" r="2.6"/><circle class="w-vent" cx="100" cy="163" r="2.6"/>
+          <circle class="w-hub" cx="100" cy="100" r="46"/>
+          <circle class="w-ring" cx="100" cy="100" r="40"/>
+          <rect class="w-mark" x="95" y="3" width="10" height="22" rx="3"/>
+        </svg>
+        <button id="horn" aria-label="Horn">
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L13 19V5L7.5 9.5H4z"/><path d="M16.5 9a4.5 4.5 0 0 1 0 6" fill="none"/><path d="M19 6.5a8 8 0 0 1 0 11" fill="none"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var MAX={1:35,2:70,3:100}, S={gear:1,rev:false,speed:0,gas:false,brk:false,steer:0,light:false};
+  var baseUrl='', lastSpeed=-1, lastSteerT=0, ARC=335.1;
+
+  try{var sv=localStorage.getItem('carIp'); if(sv){$('ip').value=sv; setBase(sv);}}catch(e){}
+  function setBase(v){
+    v=(v||'').trim().replace(/^https?:\/\//,'').replace(/\/$/,'');
+    baseUrl=v?('http://'+v):'';
+    $('dot').className='dot'+(baseUrl?' ok':'');
+    $('st').textContent=baseUrl?'CONNECTED':'DEMO';
+  }
+  $('save').addEventListener('click',function(){
+    setBase($('ip').value);
+    try{localStorage.setItem('carIp',$('ip').value.trim());}catch(e){}
+  });
+
+  // The only place that talks to the car. Swap in WebSocket or another API here later.
+  function send(cmd,v){
+    var q='cmd='+cmd+(v!==undefined?'&v='+v:'');
+    if(!baseUrl){ if(window.console)console.log('[demo] '+q); return; }
+    fetch(baseUrl+'/control?'+q,{mode:'no-cors'}).catch(function(){});
+  }
+
+  function hold(el,on,off){
+    el.addEventListener('pointerdown',function(e){e.preventDefault();el.setPointerCapture(e.pointerId);el.classList.add('on');on();});
+    ['pointerup','pointercancel'].forEach(function(ev){el.addEventListener(ev,function(){el.classList.remove('on');off();});});
+    el.addEventListener('contextmenu',function(e){e.preventDefault();});
+  }
+  hold($('gas'),function(){S.gas=true},function(){S.gas=false});
+  hold($('brk'),function(){S.brk=true;send('BRAKE',1)},function(){S.brk=false;send('BRAKE',0)});
+  hold($('horn'),function(){send('HORN',1)},function(){send('HORN',0)});
+  $('horn').addEventListener('pointerdown',function(e){e.stopPropagation();});
+
+  document.querySelectorAll('[data-g]').forEach(function(b){
+    b.addEventListener('click',function(){
+      S.gear=+b.dataset.g; S.rev=false; send('DIR','F'); send('GEAR',S.gear); ui();
+    });
+  });
+  $('back').addEventListener('click',function(){
+    S.rev=!S.rev; S.speed=0; send('DIR',S.rev?'B':'F'); ui();
+  });
+  $('stop').addEventListener('click',function(){S.speed=0;S.gas=false;send('STOP');ui();});
+  $('light').addEventListener('click',function(){
+    S.light=!S.light; $('light').setAttribute('aria-checked',S.light);
+    $('lstate').textContent=S.light?'ON':'OFF'; send('LIGHT',S.light?1:0);
+  });
+
+  // Steering wheel: free 360-degree rotation (no limit), self-centres on release
+  var w=$('wheel'), rot=0, lastA=0, drag=false, returning=false;
+  function ang(e){var r=w.getBoundingClientRect();return Math.atan2(e.clientY-(r.top+r.height/2),e.clientX-(r.left+r.width/2))*180/Math.PI;}
+  function curRot(){var m=getComputedStyle(w).transform;if(m&&m!=='none'){var v=m.match(/matrix\(([^)]+)\)/);if(v){v=v[1].split(',');return Math.atan2(+v[1],+v[0])*180/Math.PI;}}return 0;}
+  w.addEventListener('pointerdown',function(e){
+    drag=true; w.setPointerCapture(e.pointerId);
+    if(returning){rot=curRot();returning=false;}
+    w.style.transition='none'; w.style.transform='rotate('+rot+'deg)';
+    lastA=ang(e);
+  });
+  w.addEventListener('pointermove',function(e){
+    if(!drag)return;
+    var a=ang(e), d=a-lastA; lastA=a;
+    if(d>180)d-=360; if(d<-180)d+=360;
+    rot+=d; w.style.transform='rotate('+rot+'deg)';
+    S.steer=Math.max(-100,Math.min(100,Math.round(rot/135*100))); w.setAttribute('aria-valuenow',S.steer);
+    var t=Date.now(); if(t-lastSteerT>100){lastSteerT=t;send('STEER',S.steer);}
+  });
+  function endDrag(){
+    if(!drag)return; drag=false;
+    returning=true; w.style.transition='transform '+Math.min(1.2,.3+Math.abs(rot)/1800)+'s cubic-bezier(.2,.9,.3,1)';
+    w.style.transform='rotate(0deg)'; rot=0; S.steer=0; send('STEER',0);
+  }
+  w.addEventListener('pointerup',endDrag); w.addEventListener('pointercancel',endDrag);
+  w.addEventListener('transitionend',function(){returning=false;});
+
+  function ui(){
+    document.querySelectorAll('[data-g]').forEach(function(b){b.classList.toggle('on',!S.rev&&+b.dataset.g===S.gear);});
+    $('back').classList.toggle('on',S.rev);
+    $('info').textContent=S.rev?'REVERSE':('GEAR '+S.gear+' · DRIVE');
+    $('spd').textContent=Math.round(S.speed);
+    $('gfill').setAttribute('stroke-dashoffset',(ARC*(1-S.speed/100)).toFixed(1));
+  }
+
+  // Speed model: gas accelerates, releasing coasts down slowly, brake stops quickly
+  setInterval(function(){
+    var max=MAX[S.gear];
+    if(S.brk) S.speed=Math.max(0,S.speed-6);
+    else if(S.gas) S.speed=Math.min(max,S.speed+2.2);
+    else S.speed=Math.max(0,S.speed-0.15);
+    if(S.speed>max)S.speed=Math.max(max,S.speed-3);
+    var r=Math.round(S.speed);
+    if(r!==lastSpeed){lastSpeed=r;send('SPEED',r);}
+    ui();
+  },50);
+
+  ui();
+})();
+</script>
+</body>
+  </html>

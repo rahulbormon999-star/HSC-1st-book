@@ -1,7 +1,7 @@
 {
   "name": "Car App",
   "short_name": "CarApp",
-  "start_url": "./car.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2196F3",
